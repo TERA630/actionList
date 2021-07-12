@@ -1,13 +1,11 @@
 package io.terameteo.actionlist
 
 import android.os.Bundle
-import com.google.android.material.appbar.CollapsingToolbarLayout
-import com.google.android.material.floatingactionbutton.FloatingActionButton
-import com.google.android.material.snackbar.Snackbar
-import androidx.appcompat.app.AppCompatActivity
 import android.view.Menu
 import android.view.MenuItem
 import androidx.activity.viewModels
+import androidx.appcompat.app.AppCompatActivity
+import com.google.android.material.snackbar.Snackbar
 import io.terameteo.actionlist.databinding.ActivityScrollingBinding
 import io.terameteo.actionlist.ui.MainFragment
 
@@ -61,6 +59,7 @@ class ScrollingActivity : AppCompatActivity() {
             val fragment = MainFragment.newInstance(9)
             transaction.add(fragment, MAIN_WINDOW)
             transaction.replace(R.id.baseFrame,fragment)
+            transaction.addToBackStack(null)
         } else {
             // detailFragmentがインスタンス化されていたら
             if (fragmentOrNull.isVisible) {
