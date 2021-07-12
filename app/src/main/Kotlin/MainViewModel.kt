@@ -4,9 +4,7 @@ import androidx.lifecycle.MediatorLiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import io.terameteo.actionlist.model.ItemEntity
-import io.terameteo.actionlist.model.MyModel
-import io.terameteo.actionlist.model.isDoneAt
+import io.terameteo.actionlist.model.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -20,7 +18,8 @@ class MainViewModel : ViewModel() {
     val dateShortList = MutableList(7){"1/1"}
     val currentReward:MutableLiveData<Int> = MutableLiveData(0)
     val currentRewardStr = MediatorLiveData<String>()
-    val currentCategory = MediatorLiveData<List<String>>()
+    val currentCategories = MediatorLiveData<List<String>>()
+    val currentCategory = MutableLiveData<String>("")
 
     fun initialize(_context:Context) {
         myModel.initializeDB(_context)
@@ -39,9 +38,9 @@ class MainViewModel : ViewModel() {
             val list = myModel.makeItemList(_context )
             liveList.postValue(list)
         }
-        currentCategory.addSource(liveList){ value ->
+        currentCategories.addSource(liveList){ value ->
             val list = myModel.makeCategoryList(value)
-            currentCategory.postValue(list)
+            currentCategories.postValue(list)
         }
 
     }
@@ -93,13 +92,14 @@ fun MutableLiveData<Int>.valueOrZero() : Int{
 fun MutableLiveData<List<ItemEntity>>.safetyGet(position:Int): ItemEntity {
     val list = this.value
     return if (list.isNullOrEmpty()) {
-        ItemEntity()
+        ItemEntity(title = ERROR_TITLE,category = ERROR_CATEGORY)
     } else {
         list[position]
     }
 }
 //  ViewModel: Activity再生成や回転で破棄されない独自のLifecycleで管理されるClass(ViewModelLifeCycle)
-//  各Activity固有｡ 同じActivityのFragmentでは共有される｡
+//  retainInstance = trueなHolderFragmentにキャッシュされているらしい｡
+//  各Activity固有｡ 同じActivityのFragmentでは共有できる｡
 //  Model-> ViewModel　ModelからUIの描画(Binding)に必要な情報に変換しLivedataで保持する｡
 //  ActivityやFragmentはLiveDataをObserveして変更があればUI反映 or DataBinding使用｡
 //  VMはViewへの参照は持つべきでない｡ ActivityContext の参照を保持するべきでない｡
