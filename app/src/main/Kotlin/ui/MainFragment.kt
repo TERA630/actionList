@@ -3,11 +3,9 @@ package io.terameteo.actionlist.ui
 import android.os.Bundle
 import android.util.Log
 import android.view.*
-import androidx.fragment.app.Fragment
 import android.widget.ArrayAdapter
-import androidx.core.view.GestureDetectorCompat
+import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
-import androidx.recyclerview.widget.RecyclerView
 import com.google.android.flexbox.*
 import io.terameteo.actionlist.HISTORY_WINDOW
 import io.terameteo.actionlist.MAIN_WINDOW
@@ -57,7 +55,10 @@ class MainFragment : Fragment() {
         val listener = object :GestureDetector.SimpleOnGestureListener(){
             override fun onFling(e1: MotionEvent, e2: MotionEvent, velocityX: Float, velocityY: Float): Boolean {
 
-                Log.i(MAIN_WINDOW,"from ${e1.x},${e1.y} to ${e2.x},${e2.y} by $velocityX, $velocityY")
+                val moveX = (e2.x - e1.x).toInt()
+                val moveY = (e2.y - e1.y).toInt()
+
+                Log.i(MAIN_WINDOW,"vector $moveX , $moveY, velocity is  $velocityX, $velocityY")
                 return super.onFling(e1, e2, velocityX, velocityY)
             }
             override fun onDown(e: MotionEvent?): Boolean {
@@ -89,10 +90,6 @@ class MainFragment : Fragment() {
         return binding.root
     }
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-
-        super.onViewCreated(view, savedInstanceState)
-    }
     companion object {
         @JvmStatic
         fun newInstance(position: Int): MainFragment {
