@@ -3,13 +3,14 @@ package io.terameteo.actionlist.ui
 import android.os.Bundle
 import android.util.Log
 import android.view.*
+import android.view.animation.*
 import android.widget.ArrayAdapter
+import android.widget.TextView
+import androidx.core.content.res.ResourcesCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import com.google.android.flexbox.*
-import io.terameteo.actionlist.HISTORY_WINDOW
-import io.terameteo.actionlist.MAIN_WINDOW
-import io.terameteo.actionlist.MainViewModel
+import io.terameteo.actionlist.*
 import io.terameteo.actionlist.R
 import io.terameteo.actionlist.databinding.FragmentMainBinding
 import io.terameteo.actionlist.model.ERROR_CATEGORY
@@ -19,7 +20,7 @@ const val ARG_POSITION = "positionOfThisFragment"
 class MainFragment : Fragment() {
     private val viewModel: MainViewModel by activityViewModels()
     private lateinit var binding: FragmentMainBinding
-    lateinit var  gestureDetector:GestureDetector
+
     lateinit var  detector:GestureDetector
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
@@ -59,6 +60,10 @@ class MainFragment : Fragment() {
                 val moveY = (e2.y - e1.y).toInt()
 
                 Log.i(MAIN_WINDOW,"vector $moveX , $moveY, velocity is  $velocityX, $velocityY")
+                if(moveX >= 100) swipeRight()
+                if(moveX <= -100) swipeLeft()
+
+
                 return super.onFling(e1, e2, velocityX, velocityY)
             }
             override fun onDown(e: MotionEvent?): Boolean {
@@ -79,6 +84,7 @@ class MainFragment : Fragment() {
             adapter.submitList(it)
             binding.firstPageList.adapter = adapter
         }
+
         viewModel.currentCategories.observe(viewLifecycleOwner){
             val arrayAdapter = ArrayAdapter<String>(requireContext(), R.layout.support_simple_spinner_dropdown_item)
             val categoryList = viewModel.currentCategories.value ?: listOf(ERROR_CATEGORY)
@@ -89,7 +95,32 @@ class MainFragment : Fragment() {
         }
         return binding.root
     }
+    private fun swipeLeft(){
+        val view = binding.dateShowing
+        view.animate().translationX(-view.width.toFloat())
+            .setDuration(500)
+            .withEndAction {
+                makeNewView(view)
+                view.visibility = View.GONE
+            }
 
+    }
+    private fun swipeRight(){
+        val view = binding.dateShowing
+        view.animate().translationX(view.width.toFloat())
+            .setDuration(500)
+            .setInterpolator(AccelerateInterpolator())
+            .withEndAction { view.visibility = View.GONE}
+    }
+    private fun makeNewView(view:View) {
+        val textView = TextView(view.context)
+        textView.text = viewModel.dateJpList[viewModel.currentPage.valueOrZero()]
+        textView.background = ResourcesCompat.getDrawable(view.context.resources,R.drawable.square_green_gradient,view.context.theme)
+        binding.mainFragmentContainer.addView(textView)
+        val anim = AnimationUtils.loadAnimation(view.context,R.anim.slide_out_right)
+        textView.startAnimation(anim)
+        return
+    }
     companion object {
         @JvmStatic
         fun newInstance(position: Int): MainFragment {
