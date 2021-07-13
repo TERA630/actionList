@@ -41,7 +41,7 @@ class MyModel {
     fun getDayStringShort(backDate: Int):String{
         val date = LocalDate.now().minusDays(backDate.toLong())
         val javaUtilDate = Date.from(date.atStartOfDay(ZoneId.systemDefault()).toInstant())
-        return  SimpleDateFormat("M/dd", Locale.ENGLISH).format(javaUtilDate)
+        return  SimpleDateFormat("M/d", Locale.ENGLISH).format(javaUtilDate)
     }
     private fun makeItemListFromResource(_context: Context): List<ItemEntity> {
         val itemsFromResource = _context.resources.getStringArray(R.array.default_item_list)
@@ -72,15 +72,15 @@ class MyModel {
 
         return if (elementList.lastIndex ==2) {
             // historyが無い場合
-            ItemEntity(id, title,reward,category,shouldDoToday = true,finishedHistory = "")
+            ItemEntity(id, title,reward,category,finishedHistory = "")
         } else {
             // history がある場合
             if(elementList[3].matches("(20[0-9]{2}/([1-9]|1[0-2])/([1-9]|[12][0-9]|3[01]),?)+".toRegex())) {
                 // 年：2000-2099 /月： 1～9 or 10～12/ 日： 1～9　or　10～29　or　30,31の要素が一つでもあればマッチ
-                ItemEntity(id, title,reward,category,shouldDoToday = true,finishedHistory = elementList[3])
+                ItemEntity(id, title,reward,category,finishedHistory = elementList[3])
             } else {
                 // マッチしなければ空文字列をHistoryに返しておく
-                ItemEntity(id,title,reward,category,shouldDoToday = true,finishedHistory = "")
+                ItemEntity(id,title,reward,category,finishedHistory = "")
             }
         }
     }

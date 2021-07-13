@@ -22,7 +22,12 @@
             app:contentScrim="?attr/colorPrimary"
             app:layout_scrollFlags="scroll|exitUntilCollapsed"
             app:toolbarId="@+id/toolbar">
-
+        <TextView
+            android:id="@+id/rewardText"
+            android:layout_width="wrap_content"
+            android:layout_height="@dimen/reward_size"
+            android:layout_gravity="end"
+            tools:text = "@string/testReward"/>
             <androidx.appcompat.widget.Toolbar
                 android:id="@+id/toolbar"
                 android:layout_width="match_parent"

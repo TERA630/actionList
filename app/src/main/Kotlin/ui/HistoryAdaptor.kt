@@ -22,7 +22,6 @@ class HistoryAdaptor(val viewModel: MainViewModel):RecyclerView.Adapter<Recycler
     }
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
         val gridView = (holder as GridViewHolder).grid as TextView
-
         val row = position % 5
         val column = position /5
         when (row){
@@ -44,16 +43,14 @@ class HistoryAdaptor(val viewModel: MainViewModel):RecyclerView.Adapter<Recycler
     private fun bindHeaderDate(column:Int,view: TextView){
         if (column >= 1 ) view.text = viewModel.dateShortList[column - 1]  // × =>
     }
-
     private fun bindItemTitle(row:Int, view: TextView){
         view.text = viewModel.liveList.safetyGet(row).title
     }
     private fun bindItemLog(row:Int, column: Int,view: TextView){
         val item = viewModel.liveList.safetyGet(row)
-        var dateStr = "2021/" + viewModel.dateShortList[column-1]
-        view.text = if (item.isDoneAt(dateStr)) { "○" } else {"×"}
+        val dateStr = "2021/" + viewModel.dateShortList[column-1]
+        view.text = if (item.isDoneAt(dateStr)) {  view.resources.getString(R.string.done)} else { view.resources.getString(R.string.undone)}
     }
-
 }
 // GridLayout VERTICAL(Span3)    0 1 2   HORIZON 0
 //                               3 4 5             1

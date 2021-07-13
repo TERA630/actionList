@@ -9,9 +9,12 @@
     android:alpha="0.80"
     android:background="@drawable/square_plain"
     android:padding="2dp"
-    android:text="@string/testItem"
     android:textAlignment="center"
     android:textAppearance="@style/TextAppearance.AppCompat.Large"
     android:textColor="@color/darkBrown"
     android:textSize="20sp"
     tools:text="@string/done" />
+
+<!-- sp: Font sizeで伸縮される｡ dp ドット密度で変更される｡ 160dpiで1dp 1px
+     
+-->

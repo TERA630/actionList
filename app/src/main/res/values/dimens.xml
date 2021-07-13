@@ -8,4 +8,5 @@
     <dimen name="reward_size">18sp</dimen>
     <dimen name="item_padding">8dp</dimen>
     <dimen name="padding_detailFragment">8dp</dimen>
+    <dimen name="ui_component_height">48dp</dimen>
 </resources>

@@ -23,7 +23,6 @@ class ScrollingActivity : AppCompatActivity() {
         viewModel.initialize(this)
         binding = ActivityScrollingBinding.inflate(layoutInflater)
         setContentView(binding.root)
-
         setSupportActionBar(findViewById(R.id.toolbar))
         binding.toolbarLayout.title = title
         binding.fab.setOnClickListener { view ->
@@ -38,7 +37,6 @@ class ScrollingActivity : AppCompatActivity() {
         menuInflater.inflate(R.menu.menu_scrolling, menu)
         return true
     }
-
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         // Handle action bar item clicks here. The action bar will
         // automatically handle clicks on the Home/Up button, so long

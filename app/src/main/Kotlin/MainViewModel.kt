@@ -20,6 +20,7 @@ class MainViewModel : ViewModel() {
     val currentRewardStr = MediatorLiveData<String>()
     val currentCategories = MediatorLiveData<List<String>>()
     val currentCategory = MutableLiveData<String>("")
+    val currentPage = MutableLiveData<Int>(0)
 
     fun initialize(_context:Context) {
         myModel.initializeDB(_context)

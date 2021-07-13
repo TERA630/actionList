@@ -20,7 +20,7 @@ interface ItemCollectionDAO {
     fun delete(item: ItemEntity)
 
 }
-@Database(entities = [ItemEntity::class], version = 2) // 使うentityのクラスを渡す｡
+@Database(entities = [ItemEntity::class], version = 1) // 使うentityのクラスを渡す｡
 abstract class ItemCollectionDB : RoomDatabase() {
     abstract fun itemCollectionDAO(): ItemCollectionDAO // 上記Interfaceの抽象メソッドを含む
 }
@@ -31,7 +31,6 @@ data class ItemEntity(
     @ColumnInfo(name = "title") var title: String = "unnamed",
     @ColumnInfo(name = "reward") var reward: Int = 30,
     @ColumnInfo(name = "category") var category: String = "",
-    @ColumnInfo(name = "should_do_today") var shouldDoToday: Boolean = true,
     @ColumnInfo(name = "finished_history")  var finishedHistory: String = ""
 )
 // 拡張関数として静的(Static)メソッドを宣言
