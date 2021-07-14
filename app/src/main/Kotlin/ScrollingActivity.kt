@@ -25,11 +25,18 @@ class ScrollingActivity : AppCompatActivity() {
         setContentView(binding.root)
         setSupportActionBar(findViewById(R.id.toolbar))
         binding.toolbarLayout.title = title
+        // Event Handler
         binding.fab.setOnClickListener { view ->
             Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
                 .setAction("Action", null).show()
         }
         wakeMainFragment()
+
+        //　データ更新時の処理
+        viewModel.currentRewardStr.observe(this){
+            binding.rewardText.text = it
+        }
+
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {

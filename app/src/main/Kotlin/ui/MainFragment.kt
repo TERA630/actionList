@@ -3,10 +3,8 @@ package io.terameteo.actionlist.ui
 import android.os.Bundle
 import android.util.Log
 import android.view.*
-import android.view.animation.*
+import android.view.animation.AnimationUtils
 import android.widget.ArrayAdapter
-import android.widget.TextView
-import androidx.core.content.res.ResourcesCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import com.google.android.flexbox.*
@@ -71,12 +69,10 @@ class MainFragment : Fragment() {
             }
         }
         detector = GestureDetector(context,listener)
-        binding.dateShowing.setOnTouchListener (object :View.OnTouchListener{
-            override fun onTouch(v: View, event: MotionEvent): Boolean {
-                detector.onTouchEvent(event)
-                return true
-            }
-        })
+        binding.dateShowing.setOnTouchListener { v, event ->
+            detector.onTouchEvent(event)
+            true
+        }
 
 
         //　データ更新時の応答設定
@@ -97,30 +93,19 @@ class MainFragment : Fragment() {
     }
     private fun swipeLeft(){
         val view = binding.dateShowing
-        view.animate().translationX(-view.width.toFloat())
-            .setDuration(500)
-            .withEndAction {
-                makeNewView(view)
-                view.visibility = View.GONE
-            }
-
+        val anim = AnimationUtils.loadAnimation(view.context, R.anim.slide_leftout_rightin)
+        view.startAnimation(anim)
+        val page = viewModel.currentPage.valueOrZero()
+        if (page >= 1) viewModel.currentPage.postValue(page-1)
     }
     private fun swipeRight(){
         val view = binding.dateShowing
-        view.animate().translationX(view.width.toFloat())
-            .setDuration(500)
-            .setInterpolator(AccelerateInterpolator())
-            .withEndAction { view.visibility = View.GONE}
+        val anim = AnimationUtils.loadAnimation(view.context, R.anim.slide_rightout_leftin)
+        view.startAnimation(anim)
+        val page = viewModel.currentPage.valueOrZero()
+        if (page <= 9) viewModel.currentPage.postValue(page+1)
     }
-    private fun makeNewView(view:View) {
-        val textView = TextView(view.context)
-        textView.text = viewModel.dateJpList[viewModel.currentPage.valueOrZero()]
-        textView.background = ResourcesCompat.getDrawable(view.context.resources,R.drawable.square_green_gradient,view.context.theme)
-        binding.mainFragmentContainer.addView(textView)
-        val anim = AnimationUtils.loadAnimation(view.context,R.anim.slide_out_right)
-        textView.startAnimation(anim)
-        return
-    }
+
     companion object {
         @JvmStatic
         fun newInstance(position: Int): MainFragment {

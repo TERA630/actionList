@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<set xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <translate
+        android:duration="1000"
+        android:fromXDelta="0%"
+        android:fromYDelta="0%"
+        android:toXDelta="90%"
+        android:toYDelta="0%" />
+
+    <translate
+        android:duration="1000"
+        android:fromXDelta="90%"
+        android:fromYDelta="0%"
+        android:toXDelta="50%p"
+        android:toYDelta="0%p" />
+
+    <translate
+        android:duration="@integer/material_motion_duration_long_1"
+        android:fromXDelta="50%p"
+        android:fromYDelta="0%p"
+        android:toXDelta="0%p"
+        android:toYDelta="0%p" />
+</set>
