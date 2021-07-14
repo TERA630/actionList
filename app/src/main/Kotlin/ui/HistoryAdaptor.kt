@@ -11,10 +11,9 @@ import io.terameteo.actionlist.databinding.GridPlainBinding
 import io.terameteo.actionlist.model.isDoneAt
 import io.terameteo.actionlist.safetyGet
 
-class HistoryAdaptor(val viewModel: MainViewModel):RecyclerView.Adapter<RecyclerView.ViewHolder>() {
-    override fun getItemCount(): Int {
-        return 40
-    }
+class HistoryAdaptor(private val viewModel: MainViewModel)
+    :RecyclerView.Adapter<RecyclerView.ViewHolder>() {
+    override fun getItemCount(): Int = 40
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         val layoutInflater = LayoutInflater.from(parent.context)
         val binding = GridPlainBinding.inflate(layoutInflater, parent, false)

@@ -1,9 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.recyclerview.widget.RecyclerView xmlns:android="http://schemas.android.com/apk/res/android"
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="wrap_content"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
 
-    android:id="@+id/historyGrid"
+
+    <ImageButton
+        android:id="@+id/toMainButton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:srcCompat="@android:drawable/ic_menu_sort_by_size" />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/historyGrid"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
     android:layout_marginTop="128dp"
@@ -11,3 +23,4 @@
     tools:itemCount="40"
     tools:spanCount="8"
     tools:layoutManager="androidx.recyclerview.widget.GridLayoutManager" />
+</LinearLayout>

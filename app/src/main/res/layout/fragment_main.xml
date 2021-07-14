@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/mainFragmentContainer"
     android:layout_width="match_parent"
@@ -24,6 +25,13 @@
         android:layout_marginVertical="@dimen/activity_vertical_margin"
         tools:text="@string/testDate"/>
 
+    <ImageButton
+        android:id="@+id/imageButton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:srcCompat="@android:drawable/ic_dialog_dialer"
+        android:contentDescription="@string/pushToHistory"/>
+
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/firstPageList"
         android:layout_width="match_parent"
@@ -31,5 +39,7 @@
         android:layout_marginVertical="@dimen/activity_vertical_margin"
         tools:listitem="@layout/item_test"
         tools:itemCount="20"
-        tools:layoutManager="com.google.android.flexbox.FlexboxLayoutManager" />
+        tools:layoutManager="com.google.android.flexbox.FlexboxLayoutManager" >
+
+    </androidx.recyclerview.widget.RecyclerView>
 </LinearLayout>

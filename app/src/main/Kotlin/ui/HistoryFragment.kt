@@ -7,7 +7,9 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.recyclerview.widget.GridLayoutManager
+import io.terameteo.actionlist.MAIN_WINDOW
 import io.terameteo.actionlist.MainViewModel
+import io.terameteo.actionlist.R
 import io.terameteo.actionlist.databinding.FragmentHistoryBinding
 
 
@@ -20,9 +22,16 @@ class HistoryFragment:Fragment() {
         binding.historyGrid.layoutManager = GridLayoutManager(binding.root.context,5,GridLayoutManager.HORIZONTAL,false)
       //  binding.historyGrid.setHasFixedSize(true)
         binding.historyGrid.adapter = HistoryAdaptor(viewModel)
-
-        viewModel.liveList.observe(viewLifecycleOwner){
-
+        binding.toMainButton.setOnClickListener {
+            val transaction = parentFragmentManager.beginTransaction()
+            val fragmentOrNull = parentFragmentManager.findFragmentByTag(MAIN_WINDOW) as MainFragment?
+            fragmentOrNull ?.let {
+                transaction.show(it) }?: run {
+                val fragment = MainFragment.newInstance(10)
+                transaction.replace(R.id.baseFrame,fragment)
+            }
+            transaction.addToBackStack(null)
+            transaction.commit()
         }
 
         return binding.root

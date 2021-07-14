@@ -38,7 +38,7 @@ class MainFragment : Fragment() {
 
 
         // イベントハンドラ
-        binding.dateShowing.setOnClickListener {
+        binding.imageButton.setOnClickListener {
             val transaction = parentFragmentManager.beginTransaction()
             val fragmentOrNull = parentFragmentManager.findFragmentByTag(HISTORY_WINDOW) as HistoryFragment?
             fragmentOrNull ?.let {
