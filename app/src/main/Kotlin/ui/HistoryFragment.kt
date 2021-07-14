@@ -21,6 +21,9 @@ class HistoryFragment:Fragment() {
       //  binding.historyGrid.setHasFixedSize(true)
         binding.historyGrid.adapter = HistoryAdaptor(viewModel)
 
+        viewModel.liveList.observe(viewLifecycleOwner){
+
+        }
 
         return binding.root
     }

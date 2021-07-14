@@ -70,10 +70,12 @@ class MainFragment : Fragment() {
         }
         detector = GestureDetector(context,listener)
         binding.dateShowing.setOnTouchListener { v, event ->
-            detector.onTouchEvent(event)
+            when(event.action){
+                MotionEvent.ACTION_UP -> v.performClick()
+                else -> detector.onTouchEvent(event)
+            }
             true
         }
-
 
         //　データ更新時の応答設定
         viewModel.liveList.observe(viewLifecycleOwner){

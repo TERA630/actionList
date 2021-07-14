@@ -21,7 +21,7 @@ class HistoryAdaptor(val viewModel: MainViewModel):RecyclerView.Adapter<Recycler
         return  GridViewHolder(binding)
     }
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
-        val gridView = (holder as GridViewHolder).grid as TextView
+        val gridView = holder.itemView as TextView
         val row = position % 5
         val column = position /5
         when (row){
@@ -31,13 +31,13 @@ class HistoryAdaptor(val viewModel: MainViewModel):RecyclerView.Adapter<Recycler
                 bindHeaderDate(column,gridView)
             }
             in 1..5 -> {
-                if(column == 0) bindItemTitle(row,gridView) else  bindItemLog(row,column,gridView)
+                gridView.setBackgroundColor(ResourcesCompat.getColor(gridView.resources,
+                    R.color.white,null))
+                if(column == 0) bindItemTitle(row,gridView) else bindItemLog(row,column,gridView)
             }
-
         }
     }
     class GridViewHolder( binding: GridPlainBinding) :RecyclerView.ViewHolder(binding.root){
-        val grid = binding.grid
     }
 
     private fun bindHeaderDate(column:Int,view: TextView){
@@ -50,9 +50,15 @@ class HistoryAdaptor(val viewModel: MainViewModel):RecyclerView.Adapter<Recycler
         val item = viewModel.liveList.safetyGet(row)
         val dateStr = "2021/" + viewModel.dateShortList[column-1]
         view.text = if (item.isDoneAt(dateStr)) {  view.resources.getString(R.string.done)} else { view.resources.getString(R.string.undone)}
+        view.setOnClickListener {
+            viewModel.flipItemHistory(item,( column + 2 ))
+            notifyItemChanged(row + column * 5)
+        }
+
     }
 }
-// GridLayout VERTICAL(Span3)    0 1 2   HORIZON 0
-//                               3 4 5             1
-//                               6 7 8             2
+//                                column          row
+// GridLayout VERTICAL(Span3)    0 1 2   HORIZON 0  3  6
+//                               3 4 5    column 1  4  7
+//                               6 7 8           2  5  8
 //  除算　/　　%

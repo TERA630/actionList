@@ -36,7 +36,7 @@ class MyModel {
     fun getDayStringEn (backDate: Int):String{
         val date = LocalDate.now().minusDays(backDate.toLong())
         val javaUtilDate = Date.from(date.atStartOfDay(ZoneId.systemDefault()).toInstant())
-        return  SimpleDateFormat("yyyy/M/dd",Locale.ENGLISH).format(javaUtilDate)
+        return  SimpleDateFormat("yyyy/M/d",Locale.ENGLISH).format(javaUtilDate)
     }
     fun getDayStringShort(backDate: Int):String{
         val date = LocalDate.now().minusDays(backDate.toLong())

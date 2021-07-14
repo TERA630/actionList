@@ -65,16 +65,17 @@ class MainViewModel : ViewModel() {
     // クリックでその日の完了/未完了を切り替える｡
     fun flipItemHistory(item:ItemEntity,page:Int){
         val currentValue =  currentReward.valueOrZero()
-        if ( item.isDoneAt(dateEnList[page])) {
+        val newValue = if ( item.isDoneAt(dateEnList[page])) {
             // アイテムがチェック済み チェックをはずす
             myModel.deleteDateFromItem(item,dateEnList[page])
-            val newValue = currentValue - item.reward
-            currentReward.postValue(newValue)
+            currentValue - item.reward
         } else {
             myModel.appendDateToItem(item,dateEnList[page])
-            val newValue = currentValue + item.reward
-            currentReward.postValue(newValue)
+            currentValue + item.reward
         }
+        currentReward.postValue(newValue)
+
+
     }
     fun appendItem(newTitle:String,newReward:Int,category:String){
         if(newTitle.isBlank()) return
