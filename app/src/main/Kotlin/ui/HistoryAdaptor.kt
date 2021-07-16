@@ -50,7 +50,7 @@ class HistoryAdaptor(private val viewModel: MainViewModel)
         val dateStr = "2021/" + viewModel.dateShortList[column-1]
         view.text = if (item.isDoneAt(dateStr)) {  view.resources.getString(R.string.done)} else { view.resources.getString(R.string.undone)}
         view.setOnClickListener {
-            viewModel.flipItemHistory(item,( column + 2 ))
+            viewModel.flipItemHistory(item,dateStr)
             notifyItemChanged(row + column * 5)
         }
 

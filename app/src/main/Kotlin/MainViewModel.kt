@@ -62,20 +62,18 @@ class MainViewModel : ViewModel() {
             }
         }
     }
-    // クリックでその日の完了/未完了を切り替える｡
-    fun flipItemHistory(item:ItemEntity,page:Int){
+    // クリックでその日の完了/未完了を切り替える｡ dateStr YYYY/m/d
+    fun flipItemHistory(item:ItemEntity,dateStr: String){
         val currentValue =  currentReward.valueOrZero()
-        val newValue = if ( item.isDoneAt(dateEnList[page])) {
+        val newValue = if ( item.isDoneAt(dateStr)) {
             // アイテムがチェック済み チェックをはずす
-            myModel.deleteDateFromItem(item,dateEnList[page])
+            myModel.deleteDateFromItem(item,dateStr)
             currentValue - item.reward
         } else {
-            myModel.appendDateToItem(item,dateEnList[page])
+            myModel.appendDateToItem(item,dateStr)
             currentValue + item.reward
         }
         currentReward.postValue(newValue)
-
-
     }
     fun appendItem(newTitle:String,newReward:Int,category:String){
         if(newTitle.isBlank()) return

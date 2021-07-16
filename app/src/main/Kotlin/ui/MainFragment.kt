@@ -14,11 +14,10 @@ import io.terameteo.actionlist.databinding.FragmentMainBinding
 import io.terameteo.actionlist.model.ERROR_CATEGORY
 
 // TODO Category選択時のPost
-const val ARG_POSITION = "positionOfThisFragment"
+
 class MainFragment : Fragment() {
     private val viewModel: MainViewModel by activityViewModels()
     private lateinit var binding: FragmentMainBinding
-
     lateinit var  detector:GestureDetector
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
@@ -30,13 +29,9 @@ class MainFragment : Fragment() {
             justifyContent = JustifyContent.FLEX_START
             alignItems = AlignItems.FLEX_START
         }
-        val page = this.arguments?.getInt(ARG_POSITION) ?:0
-        binding.dateShowing.text = viewModel.dateJpList[page]
         binding.firstPageList.layoutManager = flexBoxLayoutManager
-        val adapter = MainListAdaptor(viewModel = viewModel,page)
+        val adapter = MainListAdaptor(viewModel = viewModel,viewModel.dateEnList[viewModel.currentPage.valueOrZero()])
         binding.firstPageList.adapter = adapter
-
-
         // イベントハンドラ
         binding.imageButton.setOnClickListener {
             val transaction = parentFragmentManager.beginTransaction()
@@ -69,18 +64,12 @@ class MainFragment : Fragment() {
             }
         }
         detector = GestureDetector(context,listener)
-        binding.dateShowing.setOnTouchListener { v, event ->
-            when(event.action){
-                MotionEvent.ACTION_UP -> v.performClick()
-                else -> detector.onTouchEvent(event)
-            }
-            true
-        }
-
         //　データ更新時の応答設定
+        viewModel.currentPage.observe(this.viewLifecycleOwner){
+            binding.dateShowing.text = viewModel.dateJpList[it]
+        }
         viewModel.liveList.observe(viewLifecycleOwner){
             adapter.submitList(it)
-            binding.firstPageList.adapter = adapter
         }
 
         viewModel.currentCategories.observe(viewLifecycleOwner){
@@ -93,10 +82,10 @@ class MainFragment : Fragment() {
         }
         return binding.root
     }
+
     private fun swipeLeft(){
-        val view = binding.dateShowing
-        val anim = AnimationUtils.loadAnimation(view.context, R.anim.slide_leftout_rightin)
-        view.startAnimation(anim)
+
+
         val page = viewModel.currentPage.valueOrZero()
         if (page >= 1) viewModel.currentPage.postValue(page-1)
     }
@@ -107,17 +96,5 @@ class MainFragment : Fragment() {
         val page = viewModel.currentPage.valueOrZero()
         if (page <= 9) viewModel.currentPage.postValue(page+1)
     }
-
-    companion object {
-        @JvmStatic
-        fun newInstance(position: Int): MainFragment {
-            val newFragment = MainFragment()
-            newFragment.arguments = Bundle().apply {
-                putInt(ARG_POSITION,position)
-            }
-            return newFragment
-        }
-    }
-
     //  e1 Scrollの起点 e2 現在の場所
 }

@@ -21,6 +21,7 @@ class ScrollingActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         viewModel.initialize(this)
+        viewModel.currentPage.postValue(9)
         binding = ActivityScrollingBinding.inflate(layoutInflater)
         setContentView(binding.root)
         setSupportActionBar(findViewById(R.id.toolbar))
@@ -61,17 +62,12 @@ class ScrollingActivity : AppCompatActivity() {
 
         if (fragmentOrNull == null) {
             // Fragmentがまだインスタンス化されてなければ(初回起動)
-            val fragment = MainFragment.newInstance(9)
-            transaction.add(fragment, MAIN_WINDOW)
-            transaction.replace(R.id.baseFrame,fragment)
+            val fragment = MainFragment()
+            transaction.add(R.id.baseFrame,fragment)
             transaction.addToBackStack(null)
         } else {
-            // detailFragmentがインスタンス化されていたら
-            if (fragmentOrNull.isVisible) {
-                transaction.hide(fragmentOrNull)
-            } else {
-                transaction.show(fragmentOrNull)
-            }
+            transaction.replace(R.id.baseFrame,fragmentOrNull)
+            transaction.addToBackStack(null)
         }
         transaction.commit()
     }

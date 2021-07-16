@@ -12,10 +12,8 @@ import io.terameteo.actionlist.databinding.ItemTestBinding
 import io.terameteo.actionlist.model.ItemEntity
 import io.terameteo.actionlist.model.isDoneAt
 
-class MainListAdaptor(
-    private val viewModel: MainViewModel,
-    private val page:Int
-) : ListAdapter<ItemEntity, RecyclerView.ViewHolder>(DiffCallback) {
+class MainListAdaptor( private val viewModel: MainViewModel,private var dateStr:String)
+        : ListAdapter<ItemEntity, RecyclerView.ViewHolder>(DiffCallback) {
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolderOfCell {
         // リストの表示要求があったとき､viewTypeに応じて必要なViewHolderを確保する｡
         val layoutInflater = LayoutInflater.from(parent.context)
@@ -23,15 +21,12 @@ class MainListAdaptor(
     }
     class ViewHolderOfCell( val binding: ItemTestBinding) :
         RecyclerView.ViewHolder(binding.root)
-    // Viewへの参照を保持｡以前は個々の子要素の参照を保存していたが､
-    // ViewBindingが使用可能となったので､Bindingのみ保持するようになった｡
-
+    // Viewへの参照を保持｡ViewBindingが使用可能となったので､個々の要素でなく､Bindingのみ保持するようになった｡
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
         // リストのPositionの部位の表示要求があったときに､データをViewに設定する｡
         val item = getItem(position)
         val holderOfCell = holder as ViewHolderOfCell
-
-        val backGround = if (item.isDoneAt(viewModel.dateEnList[page])){
+        val backGround = if (item.isDoneAt(dateStr)){
             R.drawable.square_gold_gradient
         } else {
             R.drawable.square_silver_gradient
@@ -41,10 +36,11 @@ class MainListAdaptor(
         thisView.background = ResourcesCompat.getDrawable(
             thisView.resources, backGround, thisView.context.theme)
         thisView.setOnClickListener {
-            viewModel.flipItemHistory(item,page)
+            viewModel.flipItemHistory(item,dateStr)
             notifyItemChanged(position)
         }
     }
+
 }
 
 private object DiffCallback : DiffUtil.ItemCallback<ItemEntity>() {

@@ -12,25 +12,30 @@ import io.terameteo.actionlist.MainViewModel
 import io.terameteo.actionlist.R
 import io.terameteo.actionlist.databinding.FragmentHistoryBinding
 
-
 class HistoryFragment:Fragment() {
     private val viewModel: MainViewModel by activityViewModels()
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-
+        // bind view
         val binding = FragmentHistoryBinding.inflate(inflater, container, false)
         binding.historyGrid.layoutManager = GridLayoutManager(binding.root.context,5,GridLayoutManager.HORIZONTAL,false)
-      //  binding.historyGrid.setHasFixedSize(true)
         binding.historyGrid.adapter = HistoryAdaptor(viewModel)
+        // event handling
         binding.toMainButton.setOnClickListener {
             val transaction = parentFragmentManager.beginTransaction()
             val fragmentOrNull = parentFragmentManager.findFragmentByTag(MAIN_WINDOW) as MainFragment?
-            fragmentOrNull ?.let {
-                transaction.show(it) }?: run {
-                val fragment = MainFragment.newInstance(10)
+            if(fragmentOrNull != null){
+                if (fragmentOrNull.isVisible) {
+                    transaction.hide(fragmentOrNull)
+                } else {
+                    transaction.show(fragmentOrNull)
+                }
+            } else {
+                val fragment = MainFragment()
+                transaction.addToBackStack(null)
                 transaction.replace(R.id.baseFrame,fragment)
             }
-            transaction.addToBackStack(null)
+
             transaction.commit()
         }
 
