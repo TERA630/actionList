@@ -1,5 +1,6 @@
 package io.terameteo.actionlist
 import android.content.Context
+import android.util.Log
 import androidx.lifecycle.MediatorLiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -10,7 +11,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 
-const val MAX_PAGE = 9
+const val  VIEW_MODEL = "mainViewModel"
 
 class MainViewModel : ViewModel() {
     private val myModel: MyModel by lazy { MyModel() }
@@ -19,11 +20,11 @@ class MainViewModel : ViewModel() {
     val dateEnList = MutableList(10){"1970/1/1"}
     val dateShortList = MutableList(7){"1/1"}
     // LiveData
-    val currentReward:MutableLiveData<Int> = MutableLiveData(0)
+    private val currentReward:MutableLiveData<Int> = MutableLiveData(0)
     val currentRewardStr = MediatorLiveData<String>()
     val currentCategories = MediatorLiveData<List<String>>()
-    val currentCategory = MutableLiveData<String>("")
-    val currentPage = MutableLiveData<Int>(0)
+    val currentCategory = MutableLiveData ("")
+    val currentPage = MutableLiveData(0)
 
     fun initialize(_context:Context) {
         myModel.initializeDB(_context)
@@ -43,10 +44,9 @@ class MainViewModel : ViewModel() {
             liveList.postValue(list)
         }
         currentCategories.addSource(liveList){ value ->
-            val list = myModel.makeCategoryList(value)
+            val list = myModel.makeCategoryList()
             currentCategories.postValue(list)
         }
-
     }
     fun stateSave(_context: Context) {
         val reward = currentReward.value ?:0
@@ -83,8 +83,24 @@ class MainViewModel : ViewModel() {
         list.add(newItem)
         liveList.postValue(list)
     }
+    fun allItem(){
+        viewModelScope.launch {
+            val list = myModel.getAllItem()
+            if(list.isNotEmpty()) {
+                liveList.postValue(list)
+            }
+        }
 
-
+    }
+    fun filterItemBy(category: String){
+        val list = myModel.makeListByCategory(category)
+        if(list.isEmpty()) {
+            Log.w(VIEW_MODEL,"filteredItem was empty")
+        } else {
+            Log.i(VIEW_MODEL,"filteredItem has ${list.size} members")
+        }
+        liveList.postValue(list)
+        }
 }
 
 // LiveDataの拡張関数 Static method
@@ -116,6 +132,3 @@ fun MutableLiveData<List<ItemEntity>>.safetyGet(position:Int): ItemEntity {
 //  各Coroutineの親子関係も制御できる｡
 //　CoroutineDispatcher：Coroutineを動かすThreadを指定できる｡
 //　指定がなければDispatcher.Defaultが追加される｡　ほかにはDispatcher.Mail　.IOなど
-
-
-

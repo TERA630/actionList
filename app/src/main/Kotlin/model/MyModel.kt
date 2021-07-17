@@ -55,6 +55,21 @@ class MyModel {
         return if(list.isEmpty()){ makeItemListFromResource(_context)}
         else { list }
     }
+    fun makeListByCategory (_category: String) :List<ItemEntity>{
+        val roomList = dao.getAll()
+        val list = roomList.value ?: emptyList()
+        val filteredList = list.filter { itemEntity ->  itemEntity.category == _category }
+        return filteredList
+    }
+    fun getAllItem():List<ItemEntity>{
+        val roomList = dao.getAll()
+        val list = roomList.value ?: emptyList()
+        if(list.isEmpty()){
+            Log.w("model","Item is empty")
+        }
+        return list
+    }
+
     fun insertItem(itemEntity: ItemEntity){
         dao.insert(itemEntity)
     }
@@ -84,8 +99,9 @@ class MyModel {
             }
         }
     }
-    fun makeCategoryList( _itemList:List<ItemEntity>) : List<String>{
-        val categoryList = List(_itemList.size){index-> _itemList[index].category}
+    fun makeCategoryList( ) : List<String>{
+        val list = getAllItem()
+        val categoryList = List(list.size){index-> list[index].category}
         return categoryList.distinct()
     }
     fun loadRewardFromPreference(_context: Context):Int {

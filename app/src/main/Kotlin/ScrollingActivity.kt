@@ -40,6 +40,10 @@ class ScrollingActivity : AppCompatActivity() {
 
     }
 
+    override fun onPause() {
+        super.onPause()
+        viewModel.stateSave(this)
+    }
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
         // Inflate the menu; this adds items to the action bar if it is present.
         menuInflater.inflate(R.menu.menu_scrolling, menu)
