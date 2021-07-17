@@ -12,7 +12,9 @@ import io.terameteo.actionlist.databinding.ItemTestBinding
 import io.terameteo.actionlist.model.ItemEntity
 import io.terameteo.actionlist.model.isDoneAt
 
-class MainListAdaptor( private val viewModel: MainViewModel,private var dateStr:String)
+// VMと dateStr YYYY/m/d を渡されると list の historyに含まれているかをみて､BackGroundを切りかえて表示する｡
+
+class MainListAdaptor(private val viewModel: MainViewModel,private var dateStr:String)
         : ListAdapter<ItemEntity, RecyclerView.ViewHolder>(DiffCallback) {
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolderOfCell {
         // リストの表示要求があったとき､viewTypeに応じて必要なViewHolderを確保する｡
@@ -20,7 +22,9 @@ class MainListAdaptor( private val viewModel: MainViewModel,private var dateStr:
         return ViewHolderOfCell(ItemTestBinding.inflate(layoutInflater, parent, false))
     }
     class ViewHolderOfCell( val binding: ItemTestBinding) :
-        RecyclerView.ViewHolder(binding.root)
+        RecyclerView.ViewHolder(binding.root) {
+        }
+
     // Viewへの参照を保持｡ViewBindingが使用可能となったので､個々の要素でなく､Bindingのみ保持するようになった｡
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
         // リストのPositionの部位の表示要求があったときに､データをViewに設定する｡
@@ -40,7 +44,10 @@ class MainListAdaptor( private val viewModel: MainViewModel,private var dateStr:
             notifyItemChanged(position)
         }
     }
-
+    fun dateStrChange(_dateStr: String){
+        dateStr = _dateStr
+        notifyDataSetChanged()
+    }
 }
 
 private object DiffCallback : DiffUtil.ItemCallback<ItemEntity>() {
@@ -51,7 +58,7 @@ private object DiffCallback : DiffUtil.ItemCallback<ItemEntity>() {
     override fun areContentsTheSame(
         old: ItemEntity, new: ItemEntity): Boolean {
         val isSameAppearance = (old.title == new.title)
-                &&(old.finishedHistory == new.finishedHistory )
+                &&(old.history == new.history )
                 &&(old.category ==  new.category )
          return isSameAppearance
     }

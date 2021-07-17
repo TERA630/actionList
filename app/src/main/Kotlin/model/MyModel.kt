@@ -72,15 +72,15 @@ class MyModel {
 
         return if (elementList.lastIndex ==2) {
             // historyが無い場合
-            ItemEntity(id, title,reward,category,finishedHistory = "")
+            ItemEntity(id, title,reward,category,history = "")
         } else {
             // history がある場合
             if(elementList[3].matches("(20[0-9]{2}/([1-9]|1[0-2])/([1-9]|[12][0-9]|3[01]),?)+".toRegex())) {
                 // 年：2000-2099 /月： 1～9 or 10～12/ 日： 1～9　or　10～29　or　30,31の要素が一つでもあればマッチ
-                ItemEntity(id, title,reward,category,finishedHistory = elementList[3])
+                ItemEntity(id, title,reward,category,history = elementList[3])
             } else {
                 // マッチしなければ空文字列をHistoryに返しておく
-                ItemEntity(id,title,reward,category,finishedHistory = "")
+                ItemEntity(id,title,reward,category,history = "")
             }
         }
     }
@@ -98,22 +98,22 @@ class MyModel {
         preferenceEditor.apply()
     }
     fun appendDateToItem(itemEntity: ItemEntity, dateStr:String) {
-        val dateList = itemEntity.finishedHistory.split(",").toMutableList()
+        val dateList = itemEntity.history.split(",").toMutableList()
         if(dateStr.matches("20[0-9]{2}/([1-9]|1[0-2])/([1-9]|[12][0-9]|3[01])".toRegex())){
             dateList.add(dateStr)
             dateList.sort()
             val newDateList = dateList.joinToString(",")
-            itemEntity.finishedHistory = newDateList
+            itemEntity.history = newDateList
         } else {
             Log.w("model","date Appending was fail")
         }
     }
     fun deleteDateFromItem(itemEntity:ItemEntity, dateStr: String){
-        val dateList = itemEntity.finishedHistory.split(",").toMutableList()
+        val dateList = itemEntity.history.split(",").toMutableList()
         if(dateList.contains(dateStr)){
             dateList.remove(dateStr)
             val newDateList = dateList.joinToString (",")
-            itemEntity.finishedHistory = newDateList
+            itemEntity.history = newDateList
         } else {
             Log.w("model","date deleting was fail")
         }

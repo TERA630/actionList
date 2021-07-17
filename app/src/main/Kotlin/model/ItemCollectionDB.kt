@@ -31,10 +31,10 @@ data class ItemEntity(
     @ColumnInfo(name = "title") var title: String = "unnamed",
     @ColumnInfo(name = "reward") var reward: Int = 30,
     @ColumnInfo(name = "category") var category: String = "",
-    @ColumnInfo(name = "finished_history")  var finishedHistory: String = ""
+    @ColumnInfo(name = "history")  var history: String = ""
 )
 // 拡張関数として静的(Static)メソッドを宣言
 
 fun ItemEntity.isDoneAt(dateStr: String): Boolean { // Str yyyy/mm/ddがFinished Historyに含まれればTRUE､なければFalse
-    return dateStr.toRegex().containsMatchIn(this.finishedHistory)
+    return dateStr.toRegex().containsMatchIn(this.history)
 }

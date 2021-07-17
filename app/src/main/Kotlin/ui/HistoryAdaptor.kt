@@ -38,7 +38,6 @@ class HistoryAdaptor(private val viewModel: MainViewModel)
     }
     class GridViewHolder( binding: GridPlainBinding) :RecyclerView.ViewHolder(binding.root){
     }
-
     private fun bindHeaderDate(column:Int,view: TextView){
         if (column >= 1 ) view.text = viewModel.dateShortList[column - 1]  // × =>
     }
@@ -53,7 +52,6 @@ class HistoryAdaptor(private val viewModel: MainViewModel)
             viewModel.flipItemHistory(item,dateStr)
             notifyItemChanged(row + column * 5)
         }
-
     }
 }
 //                                column          row

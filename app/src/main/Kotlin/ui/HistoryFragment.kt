@@ -24,18 +24,12 @@ class HistoryFragment:Fragment() {
         binding.toMainButton.setOnClickListener {
             val transaction = parentFragmentManager.beginTransaction()
             val fragmentOrNull = parentFragmentManager.findFragmentByTag(MAIN_WINDOW) as MainFragment?
-            if(fragmentOrNull != null){
-                if (fragmentOrNull.isVisible) {
-                    transaction.hide(fragmentOrNull)
-                } else {
-                    transaction.show(fragmentOrNull)
-                }
-            } else {
+            if(fragmentOrNull != null) transaction.replace(R.id.baseFrame,fragmentOrNull)
+            else {
                 val fragment = MainFragment()
                 transaction.addToBackStack(null)
                 transaction.replace(R.id.baseFrame,fragment)
             }
-
             transaction.commit()
         }
 

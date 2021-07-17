@@ -3,7 +3,6 @@ package io.terameteo.actionlist.ui
 import android.os.Bundle
 import android.util.Log
 import android.view.*
-import android.view.animation.AnimationUtils
 import android.widget.ArrayAdapter
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
@@ -19,6 +18,7 @@ class MainFragment : Fragment() {
     private val viewModel: MainViewModel by activityViewModels()
     private lateinit var binding: FragmentMainBinding
     lateinit var  detector:GestureDetector
+    lateinit var adaptor: MainListAdaptor
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View {
@@ -30,48 +30,44 @@ class MainFragment : Fragment() {
             alignItems = AlignItems.FLEX_START
         }
         binding.firstPageList.layoutManager = flexBoxLayoutManager
-        val adapter = MainListAdaptor(viewModel = viewModel,viewModel.dateEnList[viewModel.currentPage.valueOrZero()])
-        binding.firstPageList.adapter = adapter
+        adaptor = MainListAdaptor(viewModel = viewModel,viewModel.dateEnList[viewModel.currentPage.valueOrZero()])
+        binding.firstPageList.adapter = adaptor
         // イベントハンドラ
         binding.imageButton.setOnClickListener {
             val transaction = parentFragmentManager.beginTransaction()
             val fragmentOrNull = parentFragmentManager.findFragmentByTag(HISTORY_WINDOW) as HistoryFragment?
-            fragmentOrNull ?.let {
-                transaction.show(it)
-            }?: run {
+            if(fragmentOrNull == null){
                 val fragment = HistoryFragment.newInstance()
-                transaction.add(fragment, HISTORY_WINDOW)
                 transaction.replace(R.id.baseFrame,fragment)
+            } else {
+                transaction.replace(R.id.baseFrame,fragmentOrNull)
             }
             transaction.addToBackStack(null)
             transaction.commit()
         }
         val listener = object :GestureDetector.SimpleOnGestureListener(){
             override fun onFling(e1: MotionEvent, e2: MotionEvent, velocityX: Float, velocityY: Float): Boolean {
-
                 val moveX = (e2.x - e1.x).toInt()
                 val moveY = (e2.y - e1.y).toInt()
-
                 Log.i(MAIN_WINDOW,"vector $moveX , $moveY, velocity is  $velocityX, $velocityY")
                 if(moveX >= 100) swipeRight()
                 if(moveX <= -100) swipeLeft()
-
-
                 return super.onFling(e1, e2, velocityX, velocityY)
-            }
-            override fun onDown(e: MotionEvent?): Boolean {
-                return true
             }
         }
         detector = GestureDetector(context,listener)
+        binding.dateShowing.setOnTouchListener { v, event ->
+           detector.onTouchEvent(event)
+            true
+        }
         //　データ更新時の応答設定
         viewModel.currentPage.observe(this.viewLifecycleOwner){
             binding.dateShowing.text = viewModel.dateJpList[it]
+            adaptor.dateStrChange(viewModel.dateEnList[it])
         }
         viewModel.liveList.observe(viewLifecycleOwner){
-            adapter.submitList(it)
+            adaptor.submitList(it)
         }
-
         viewModel.currentCategories.observe(viewLifecycleOwner){
             val arrayAdapter = ArrayAdapter<String>(requireContext(), R.layout.support_simple_spinner_dropdown_item)
             val categoryList = viewModel.currentCategories.value ?: listOf(ERROR_CATEGORY)
@@ -82,19 +78,13 @@ class MainFragment : Fragment() {
         }
         return binding.root
     }
-
     private fun swipeLeft(){
-
-
         val page = viewModel.currentPage.valueOrZero()
         if (page >= 1) viewModel.currentPage.postValue(page-1)
     }
     private fun swipeRight(){
-        val view = binding.dateShowing
-        val anim = AnimationUtils.loadAnimation(view.context, R.anim.slide_rightout_leftin)
-        view.startAnimation(anim)
         val page = viewModel.currentPage.valueOrZero()
-        if (page <= 9) viewModel.currentPage.postValue(page+1)
+        if (page < 9) viewModel.currentPage.postValue(page+1)
     }
     //  e1 Scrollの起点 e2 現在の場所
 }
