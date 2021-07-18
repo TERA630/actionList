@@ -6,24 +6,24 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import io.terameteo.actionlist.model.*
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 const val  VIEW_MODEL = "mainViewModel"
 
 class MainViewModel : ViewModel() {
     private val myModel: MyModel by lazy { MyModel() }
-    val liveList = MutableLiveData<List<ItemEntity>>()
+
     val dateJpList = MutableList(10){"1970年1月1日(木)"}
     val dateEnList = MutableList(10){"1970/1/1"}
     val dateShortList = MutableList(7){"1/1"}
     // LiveData
+    val liveList = MutableLiveData<List<ItemEntity>>()
     private val currentReward:MutableLiveData<Int> = MutableLiveData(0)
     val currentRewardStr = MediatorLiveData<String>()
     val currentCategories = MediatorLiveData<List<String>>()
-    val currentCategory = MutableLiveData ("")
+    var currentCategory = ""
     val currentPage = MutableLiveData(0)
 
     fun initialize(_context:Context) {
@@ -39,26 +39,33 @@ class MainViewModel : ViewModel() {
         }
         currentReward.postValue(myModel.loadRewardFromPreference(_context))
         currentRewardStr.addSource(currentReward) { value -> currentRewardStr.postValue("$value　円") }
+        currentCategory = myModel.loadCurrentCategory(_context)
         viewModelScope.launch {
-            val list = myModel.makeItemList(_context )
+            val list = if( currentCategory.isBlank()) {
+                myModel.makeItemList(_context)
+            } else {
+                myModel.makeListByCategory(currentCategory)
+            }
             liveList.postValue(list)
         }
+
         currentCategories.addSource(liveList){ value ->
-            val list = myModel.makeCategoryList()
+            val list = myModel.makeCategoryList(value)
             currentCategories.postValue(list)
         }
     }
     fun stateSave(_context: Context) {
         val reward = currentReward.value ?:0
         myModel.saveRewardToPreference(reward,_context)
+        myModel.saveCurrentCategory(currentCategory,_context)
         val list = List(liveList.value?.size ?:0 ){
                 index -> liveList.safetyGet(index)
         }
-        val job = Job() + viewModelScope.coroutineContext + Dispatchers.IO
-        val viewModelBGScope=  CoroutineScope(job)
-        viewModelBGScope.launch {
+        viewModelScope.launch {
+            withContext(Dispatchers.IO){
             for(i in list.indices) {
                 myModel.insertItem(list[i])
+            }
             }
         }
     }
@@ -94,6 +101,7 @@ class MainViewModel : ViewModel() {
     }
     fun filterItemBy(category: String){
         val list = myModel.makeListByCategory(category)
+        
         if(list.isEmpty()) {
             Log.w(VIEW_MODEL,"filteredItem was empty")
         } else {

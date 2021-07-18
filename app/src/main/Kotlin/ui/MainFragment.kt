@@ -65,11 +65,10 @@ class MainFragment : Fragment() {
         mBinding.spinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener{
             override fun onItemSelected(parent: AdapterView<*>, view: View, position: Int, id: Long) {
                 val category = parent.selectedItem.toString()
-                if(category.isNullOrEmpty()) return
                 mViewModel.filterItemBy(category)
             }
             override fun onNothingSelected(parent: AdapterView<*>?) {
-                mViewModel.allItem()
+                Log.i(VIEW_MODEL,"no category selected")
             }
 
         }
@@ -81,7 +80,7 @@ class MainFragment : Fragment() {
         mViewModel.liveList.observe(viewLifecycleOwner){
             mAdaptor.submitList(it)
         }
-        mViewModel.currentCategories.observe(viewLifecycleOwner){
+        mViewModel.currentCategories.observe(this.viewLifecycleOwner){
             val arrayAdapter = ArrayAdapter<String>(requireContext(), R.layout.support_simple_spinner_dropdown_item)
             val categoryList = mViewModel.currentCategories.value ?: listOf(ERROR_CATEGORY)
             for(i in categoryList.indices){

@@ -4,11 +4,18 @@ package io.terameteo.actionlist.model
 import androidx.lifecycle.LiveData
 import androidx.room.*
 
+// Livedataで返す様にすると､ スレッドを分けなくてもよくなる｡
+
+
 @Dao
 interface ItemCollectionDAO {
     /** 全データ取得 */
     @Query("SELECT * FROM collection_item")
     fun getAll(): LiveData<List<ItemEntity>>
+    @Query("SELECT * FROM collection_item WHERE category = :category")
+    fun getByCategory(category: String): LiveData<List<ItemEntity>>
+
+
     /** データ更新 */
     @Update
     fun update(item: ItemEntity)

@@ -14,6 +14,7 @@ import java.util.*
 const val ERROR_TITLE = "error title"
 const val ERROR_CATEGORY = "error category"
 const val REWARD_HISTORY = "rewardHistory"
+const val CURRENT_CATEGORY = "currentCategory"
 
 class MyModel {
     private lateinit var db: ItemCollectionDB
@@ -52,24 +53,31 @@ class MyModel {
     fun makeItemList(_context: Context):List<ItemEntity>{
         val roomList = dao.getAll()
         val list = roomList.value ?: emptyList()
-        return if(list.isEmpty()){ makeItemListFromResource(_context)}
-        else { list }
+        val resultlist = if(list.isEmpty()){ makeItemListFromResource(_context)}
+        else {
+            Log.i("model","list was made by resource array.")
+            list
+        }
+        return resultlist
     }
     fun makeListByCategory (_category: String) :List<ItemEntity>{
-        val roomList = dao.getAll()
+        val roomList = dao.getByCategory(_category)
         val list = roomList.value ?: emptyList()
-        val filteredList = list.filter { itemEntity ->  itemEntity.category == _category }
-        return filteredList
+        if(list.isEmpty()){
+            Log.w("model","no filtered item were got")
+        } else {
+            Log.i("model","${list.size} of items are got by filter")
+        }
+        return list
     }
     fun getAllItem():List<ItemEntity>{
         val roomList = dao.getAll()
         val list = roomList.value ?: emptyList()
         if(list.isEmpty()){
             Log.w("model","Item is empty")
-        }
+        } else { Log.i("model","${list.size} of items are got by all item") }
         return list
     }
-
     fun insertItem(itemEntity: ItemEntity){
         dao.insert(itemEntity)
     }
@@ -79,7 +87,7 @@ class MyModel {
         // 出力： storedItem (title,reward,category,finishedHistory )を返す｡
         val elementList = _string.split(";").toMutableList()
         // 文字列が規則に従っているか
-        if (elementList.lastIndex<2) {return ItemEntity(title = ERROR_TITLE)}
+        if (elementList.lastIndex<2) {return ItemEntity(title = ERROR_TITLE)} // title, reward  Category がなければ追加せず
 
         val title = if(elementList[0].isBlank()) ERROR_TITLE else elementList[0].trim()
         val reward = if(elementList[1].isDigitsOnly())  elementList[1].toInt() else 0
@@ -99,8 +107,7 @@ class MyModel {
             }
         }
     }
-    fun makeCategoryList( ) : List<String>{
-        val list = getAllItem()
+    fun makeCategoryList(list:List<ItemEntity> ) : List<String>{
         val categoryList = List(list.size){index-> list[index].category}
         return categoryList.distinct()
     }
@@ -112,6 +119,15 @@ class MyModel {
         val preferenceEditor = _context.getSharedPreferences(REWARD_HISTORY, Context.MODE_PRIVATE).edit()
         preferenceEditor.putInt(REWARD_HISTORY, reward)
         preferenceEditor.apply()
+    }
+    fun saveCurrentCategory(_category:String,_context: Context){
+        val preferenceEditor = _context.getSharedPreferences(CURRENT_CATEGORY, Context.MODE_PRIVATE).edit()
+        preferenceEditor.putString(CURRENT_CATEGORY,_category)
+        preferenceEditor.apply()
+    }
+    fun loadCurrentCategory(_context: Context):String{
+        val preferences = _context.getSharedPreferences(REWARD_HISTORY, Context.MODE_PRIVATE)
+        return preferences?.getString(CURRENT_CATEGORY,"") ?: ""
     }
     fun appendDateToItem(itemEntity: ItemEntity, dateStr:String) {
         val dateList = itemEntity.history.split(",").toMutableList()
