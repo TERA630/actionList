@@ -57,10 +57,10 @@ private object DiffCallback : DiffUtil.ItemCallback<ItemEntity>() {
     }
     override fun areContentsTheSame(
         old: ItemEntity, new: ItemEntity): Boolean {
-        val isSameAppearance = (old.title == new.title)
+        val seemsToSame = (old.title == new.title)
                 &&(old.history == new.history )
                 &&(old.category ==  new.category )
-         return isSameAppearance
+         return seemsToSame
     }
 
 }

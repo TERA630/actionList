@@ -14,6 +14,8 @@ import java.util.*
 const val ERROR_TITLE = "error title"
 const val ERROR_CATEGORY = "error category"
 const val REWARD_HISTORY = "rewardHistory"
+const val CURRENT_CATEGORY ="currentCategory"
+
 
 class MyModel {
     private lateinit var db: ItemCollectionDB
@@ -97,6 +99,16 @@ class MyModel {
         preferenceEditor.putInt(REWARD_HISTORY, reward)
         preferenceEditor.apply()
     }
+    fun loadCategoryFromPreference(_context: Context):String {
+        val preferences = _context.getSharedPreferences(CURRENT_CATEGORY, Context.MODE_PRIVATE)
+        return preferences?.getString(REWARD_HISTORY, "") ?: ""
+    }
+    fun saveCategoryToPreference(_category:String,_context: Context){
+        val preferenceEditor = _context.getSharedPreferences(REWARD_HISTORY, Context.MODE_PRIVATE).edit()
+        preferenceEditor.putString(CURRENT_CATEGORY, _category)
+        preferenceEditor.apply()
+    }
+
     fun appendDateToItem(itemEntity: ItemEntity, dateStr:String) {
         val dateList = itemEntity.history.split(",").toMutableList()
         if(dateStr.matches("20[0-9]{2}/([1-9]|1[0-2])/([1-9]|[12][0-9]|3[01])".toRegex())){

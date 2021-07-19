@@ -21,7 +21,7 @@ class MainViewModel : ViewModel() {
     // LiveData
     val currentReward:MutableLiveData<Int> = MutableLiveData(0)
     val currentRewardStr = MediatorLiveData<String>()
-    val currentCategories = MediatorLiveData<List<String>>()
+    val currentCategories = mutableListOf<String>()
     val currentCategory = MutableLiveData<String>("")
     val currentPage = MutableLiveData<Int>(0)
 
@@ -37,16 +37,13 @@ class MainViewModel : ViewModel() {
             dateShortList[i] = myModel.getDayStringShort(6 - i)
         }
         currentReward.postValue(myModel.loadRewardFromPreference(_context))
+        currentCategory.postValue(myModel.loadCategoryFromPreference(_context))
         currentRewardStr.addSource(currentReward) { value -> currentRewardStr.postValue("$value　円") }
         viewModelScope.launch {
             val list = myModel.makeItemList(_context )
+            currentCategories.addAll(myModel.makeCategoryList(list))
             liveList.postValue(list)
         }
-        currentCategories.addSource(liveList){ value ->
-            val list = myModel.makeCategoryList(value)
-            currentCategories.postValue(list)
-        }
-
     }
     fun stateSave(_context: Context) {
         val reward = currentReward.value ?:0
