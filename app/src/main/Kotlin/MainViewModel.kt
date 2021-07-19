@@ -25,6 +25,9 @@ class MainViewModel : ViewModel() {
     val currentCategories = MediatorLiveData<List<String>>()
     var currentCategory = ""
     val currentPage = MutableLiveData(0)
+    val currentCategories = mutableListOf<String>()
+    val currentCategory = MutableLiveData<String>("")
+    val currentPage = MutableLiveData<Int>(0)
 
     fun initialize(_context:Context) {
         myModel.initializeDB(_context)
@@ -38,6 +41,7 @@ class MainViewModel : ViewModel() {
             dateShortList[i] = myModel.getDayStringShort(6 - i)
         }
         currentReward.postValue(myModel.loadRewardFromPreference(_context))
+        currentCategory.postValue(myModel.loadCategoryFromPreference(_context))
         currentRewardStr.addSource(currentReward) { value -> currentRewardStr.postValue("$value　円") }
         currentCategory = myModel.loadCurrentCategory(_context)
         viewModelScope.launch {
@@ -46,6 +50,8 @@ class MainViewModel : ViewModel() {
             } else {
                 myModel.makeListByCategory(currentCategory)
             }
+            val list = myModel.makeItemList(_context )
+            currentCategories.addAll(myModel.makeCategoryList(list))
             liveList.postValue(list)
         }
 
@@ -101,7 +107,7 @@ class MainViewModel : ViewModel() {
     }
     fun filterItemBy(category: String){
         val list = myModel.makeListByCategory(category)
-        
+
         if(list.isEmpty()) {
             Log.w(VIEW_MODEL,"filteredItem was empty")
         } else {
@@ -127,6 +133,7 @@ fun MutableLiveData<List<ItemEntity>>.safetyGet(position:Int): ItemEntity {
 //  ViewModel: Activity再生成や回転で破棄されない独自のLifecycleで管理されるClass(ViewModelLifeCycle)
 //  retainInstance = trueなHolderFragmentにキャッシュされているらしい｡
 //  各Activity固有｡ 同じActivityのFragmentでは共有できる｡
+//  負わせるべき役割
 //  Model-> ViewModel　ModelからUIの描画(Binding)に必要な情報に変換しLivedataで保持する｡
 //  ActivityやFragmentはLiveDataをObserveして変更があればUI反映 or DataBinding使用｡
 //  VMはViewへの参照は持つべきでない｡ ActivityContext の参照を保持するべきでない｡

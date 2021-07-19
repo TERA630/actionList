@@ -12,7 +12,6 @@ import com.google.android.flexbox.*
 import io.terameteo.actionlist.*
 import io.terameteo.actionlist.R
 import io.terameteo.actionlist.databinding.FragmentMainBinding
-import io.terameteo.actionlist.model.ERROR_CATEGORY
 
 // TODO Category選択時のPost
 @SuppressLint("ClickableViewAccessibility")
@@ -36,6 +35,18 @@ class MainFragment : Fragment() {
         mBinding.firstPageList.adapter = mAdaptor
         // コマンド処理
         mBinding.imageButton.setOnClickListener {
+        // bind View
+        binding.firstPageList.layoutManager = flexBoxLayoutManager
+        adaptor = MainListAdaptor(viewModel = viewModel,viewModel.dateEnList[viewModel.currentPage.valueOrZero()])
+        binding.firstPageList.adapter = adaptor
+        val arrayAdapter = ArrayAdapter<String>(requireContext(), R.layout.support_simple_spinner_dropdown_item)
+        for(i in viewModel.currentCategories.indices){
+            arrayAdapter.add(viewModel.currentCategories[i])
+        }
+        binding.spinner.adapter = arrayAdapter
+
+        // イベントハンドラ
+        binding.imageButton.setOnClickListener {
             val transaction = parentFragmentManager.beginTransaction()
             val fragmentOrNull = parentFragmentManager.findFragmentByTag(HISTORY_WINDOW) as HistoryFragment?
             if(fragmentOrNull == null){

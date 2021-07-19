@@ -15,7 +15,6 @@ const val HISTORY_WINDOW = "historyWindow"
 
 class ScrollingActivity : AppCompatActivity() {
     private val viewModel: MainViewModel by viewModels() // activity-ktx
-
     private lateinit var binding: ActivityScrollingBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -32,12 +31,15 @@ class ScrollingActivity : AppCompatActivity() {
                 .setAction("Action", null).show()
         }
         wakeMainFragment()
-
         //　データ更新時の処理
         viewModel.currentRewardStr.observe(this){
             binding.rewardText.text = it
         }
 
+    }
+    override fun onPause() {
+        viewModel.stateSave(this)
+        super.onPause()
     }
 
     override fun onPause() {
@@ -68,10 +70,8 @@ class ScrollingActivity : AppCompatActivity() {
             // Fragmentがまだインスタンス化されてなければ(初回起動)
             val fragment = MainFragment()
             transaction.add(R.id.baseFrame,fragment)
-            transaction.addToBackStack(null)
         } else {
             transaction.replace(R.id.baseFrame,fragmentOrNull)
-            transaction.addToBackStack(null)
         }
         transaction.commit()
     }
