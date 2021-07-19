@@ -10,7 +10,6 @@ import com.google.android.flexbox.*
 import io.terameteo.actionlist.*
 import io.terameteo.actionlist.R
 import io.terameteo.actionlist.databinding.FragmentMainBinding
-import io.terameteo.actionlist.model.ERROR_CATEGORY
 
 // TODO Category選択時のPost
 
@@ -29,9 +28,16 @@ class MainFragment : Fragment() {
             justifyContent = JustifyContent.FLEX_START
             alignItems = AlignItems.FLEX_START
         }
+        // bind View
         binding.firstPageList.layoutManager = flexBoxLayoutManager
         adaptor = MainListAdaptor(viewModel = viewModel,viewModel.dateEnList[viewModel.currentPage.valueOrZero()])
         binding.firstPageList.adapter = adaptor
+        val arrayAdapter = ArrayAdapter<String>(requireContext(), R.layout.support_simple_spinner_dropdown_item)
+        for(i in viewModel.currentCategories.indices){
+            arrayAdapter.add(viewModel.currentCategories[i])
+        }
+        binding.spinner.adapter = arrayAdapter
+
         // イベントハンドラ
         binding.imageButton.setOnClickListener {
             val transaction = parentFragmentManager.beginTransaction()
@@ -68,14 +74,7 @@ class MainFragment : Fragment() {
         viewModel.liveList.observe(viewLifecycleOwner){
             adaptor.submitList(it)
         }
-        viewModel.currentCategories.observe(viewLifecycleOwner){
-            val arrayAdapter = ArrayAdapter<String>(requireContext(), R.layout.support_simple_spinner_dropdown_item)
-            val categoryList = viewModel.currentCategories.value ?: listOf(ERROR_CATEGORY)
-            for(i in categoryList.indices){
-                arrayAdapter.add(categoryList[i])
-            }
-            binding.spinner.adapter = arrayAdapter
-        }
+
         return binding.root
     }
     private fun swipeLeft(){

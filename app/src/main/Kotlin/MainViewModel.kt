@@ -100,6 +100,7 @@ fun MutableLiveData<List<ItemEntity>>.safetyGet(position:Int): ItemEntity {
 //  ViewModel: Activity再生成や回転で破棄されない独自のLifecycleで管理されるClass(ViewModelLifeCycle)
 //  retainInstance = trueなHolderFragmentにキャッシュされているらしい｡
 //  各Activity固有｡ 同じActivityのFragmentでは共有できる｡
+//  負わせるべき役割
 //  Model-> ViewModel　ModelからUIの描画(Binding)に必要な情報に変換しLivedataで保持する｡
 //  ActivityやFragmentはLiveDataをObserveして変更があればUI反映 or DataBinding使用｡
 //  VMはViewへの参照は持つべきでない｡ ActivityContext の参照を保持するべきでない｡
