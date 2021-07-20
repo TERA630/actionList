@@ -30,23 +30,20 @@ class MainFragment : Fragment() {
             justifyContent = JustifyContent.FLEX_START
             alignItems = AlignItems.FLEX_START
         }
+        // コマンド処理
+
+        // bind View
+
         mBinding.firstPageList.layoutManager = flexBoxLayoutManager
         mAdaptor = MainListAdaptor(viewModel = mViewModel,mViewModel.dateEnList[mViewModel.currentPage.valueOrZero()])
         mBinding.firstPageList.adapter = mAdaptor
+
+        val arrayAdapter = ArrayAdapter<String>(requireContext(), R.layout.support_simple_spinner_dropdown_item)
+        arrayAdapter.addAll(mViewModel.currentCategories)
+        mBinding.spinner.adapter = arrayAdapter
+
         // コマンド処理
         mBinding.imageButton.setOnClickListener {
-        // bind View
-        binding.firstPageList.layoutManager = flexBoxLayoutManager
-        adaptor = MainListAdaptor(viewModel = viewModel,viewModel.dateEnList[viewModel.currentPage.valueOrZero()])
-        binding.firstPageList.adapter = adaptor
-        val arrayAdapter = ArrayAdapter<String>(requireContext(), R.layout.support_simple_spinner_dropdown_item)
-        for(i in viewModel.currentCategories.indices){
-            arrayAdapter.add(viewModel.currentCategories[i])
-        }
-        binding.spinner.adapter = arrayAdapter
-
-        // イベントハンドラ
-        binding.imageButton.setOnClickListener {
             val transaction = parentFragmentManager.beginTransaction()
             val fragmentOrNull = parentFragmentManager.findFragmentByTag(HISTORY_WINDOW) as HistoryFragment?
             if(fragmentOrNull == null){
@@ -91,14 +88,7 @@ class MainFragment : Fragment() {
         mViewModel.liveList.observe(viewLifecycleOwner){
             mAdaptor.submitList(it)
         }
-        mViewModel.currentCategories.observe(this.viewLifecycleOwner){
-            val arrayAdapter = ArrayAdapter<String>(requireContext(), R.layout.support_simple_spinner_dropdown_item)
-            val categoryList = mViewModel.currentCategories.value ?: listOf(ERROR_CATEGORY)
-            for(i in categoryList.indices){
-                arrayAdapter.add(categoryList[i])
-            }
-            mBinding.spinner.adapter = arrayAdapter
-        }
+
         return mBinding.root
     }
     private fun swipeLeft(){

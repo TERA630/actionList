@@ -1,10 +1,6 @@
 package io.terameteo.actionlist
 import android.content.Context
-import android.util.Log
-import androidx.lifecycle.MediatorLiveData
-import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
+import androidx.lifecycle.*
 import io.terameteo.actionlist.model.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -12,22 +8,21 @@ import kotlinx.coroutines.withContext
 
 const val  VIEW_MODEL = "mainViewModel"
 
-class MainViewModel : ViewModel() {
-    private val myModel: MyModel by lazy { MyModel() }
-
+class MainViewModel() : ViewModel() {
+    private val myModel by lazy { MyModel() }
     val dateJpList = MutableList(10){"1970年1月1日(木)"}
     val dateEnList = MutableList(10){"1970/1/1"}
     val dateShortList = MutableList(7){"1/1"}
+    val currentCategories = mutableListOf<String>()
+
     // LiveData
-    val liveList = MutableLiveData<List<ItemEntity>>()
+    lateinit var liveList:LiveData<List<ItemEntity>>
+    lateinit var bindList:MediatorLiveData<List<ItemEntity>>
     private val currentReward:MutableLiveData<Int> = MutableLiveData(0)
     val currentRewardStr = MediatorLiveData<String>()
-    val currentCategories = MediatorLiveData<List<String>>()
-    var currentCategory = ""
     val currentPage = MutableLiveData(0)
-    val currentCategories = mutableListOf<String>()
     val currentCategory = MutableLiveData<String>("")
-    val currentPage = MutableLiveData<Int>(0)
+
 
     fun initialize(_context:Context) {
         myModel.initializeDB(_context)
@@ -41,29 +36,30 @@ class MainViewModel : ViewModel() {
             dateShortList[i] = myModel.getDayStringShort(6 - i)
         }
         currentReward.postValue(myModel.loadRewardFromPreference(_context))
-        currentCategory.postValue(myModel.loadCategoryFromPreference(_context))
         currentRewardStr.addSource(currentReward) { value -> currentRewardStr.postValue("$value　円") }
-        currentCategory = myModel.loadCurrentCategory(_context)
+        currentCategory.postValue(myModel.loadCategoryFromPreference(_context))
+
         viewModelScope.launch {
-            val list = if( currentCategory.isBlank()) {
-                myModel.makeItemList(_context)
-            } else {
-                myModel.makeListByCategory(currentCategory)
+            withContext(Dispatchers.IO){
+                val category = currentCategory.value ?:""
+                if(category.isBlank()) {
+                    liveList = myModel.dao.getAll()
+                } else {
+                    liveList = myModel.dao.getByCategory(category)
+                }
+                if( liveList.value.isNullOrEmpty()) {
+                    // Roomから得たリストが空やNULLならばリソースからリスト作成
+                    val list = myModel.makeItemListFromResource(_context)
+                    currentCategories.addAll(myModel.makeCategoryList(list))
             }
-            val list = myModel.makeItemList(_context )
-            currentCategories.addAll(myModel.makeCategoryList(list))
-            liveList.postValue(list)
         }
 
-        currentCategories.addSource(liveList){ value ->
-            val list = myModel.makeCategoryList(value)
-            currentCategories.postValue(list)
-        }
+
     }
     fun stateSave(_context: Context) {
         val reward = currentReward.value ?:0
         myModel.saveRewardToPreference(reward,_context)
-        myModel.saveCurrentCategory(currentCategory,_context)
+        myModel.saveCurrentCategory(currentCategory.value ?:"",_context)
         val list = List(liveList.value?.size ?:0 ){
                 index -> liveList.safetyGet(index)
         }
@@ -96,26 +92,17 @@ class MainViewModel : ViewModel() {
         list.add(newItem)
         liveList.postValue(list)
     }
-    fun allItem(){
-        viewModelScope.launch {
-            val list = myModel.getAllItem()
-            if(list.isNotEmpty()) {
-                liveList.postValue(list)
-            }
-        }
 
-    }
     fun filterItemBy(category: String){
-        val list = myModel.makeListByCategory(category)
-
-        if(list.isEmpty()) {
-            Log.w(VIEW_MODEL,"filteredItem was empty")
-        } else {
-            Log.i(VIEW_MODEL,"filteredItem has ${list.size} members")
+        viewModelScope.launch {
+            val list = myModel.makeListByCategory(category)
+            liveList.postValue(list)
         }
-        liveList.postValue(list)
+
         }
 }
+ 
+
 
 // LiveDataの拡張関数 Static method
 

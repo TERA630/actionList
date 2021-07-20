@@ -37,14 +37,10 @@ class ScrollingActivity : AppCompatActivity() {
         }
 
     }
-    override fun onPause() {
-        viewModel.stateSave(this)
-        super.onPause()
-    }
 
     override fun onPause() {
-        super.onPause()
         viewModel.stateSave(this)
+        super.onPause()
     }
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
         // Inflate the menu; this adds items to the action bar if it is present.

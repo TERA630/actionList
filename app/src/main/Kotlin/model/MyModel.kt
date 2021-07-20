@@ -17,8 +17,8 @@ const val REWARD_HISTORY = "rewardHistory"
 const val CURRENT_CATEGORY = "currentCategory"
 
 class MyModel {
-    private lateinit var db: ItemCollectionDB
-    private lateinit var dao: ItemCollectionDAO
+    lateinit var db: ItemCollectionDB
+    lateinit var dao: ItemCollectionDAO
 
     fun initializeDB( _context: Context) {
          db = Room.databaseBuilder(_context, ItemCollectionDB::class.java, "collection_item")
@@ -44,7 +44,7 @@ class MyModel {
         val javaUtilDate = Date.from(date.atStartOfDay(ZoneId.systemDefault()).toInstant())
         return  SimpleDateFormat("M/d", Locale.ENGLISH).format(javaUtilDate)
     }
-    private fun makeItemListFromResource(_context: Context): List<ItemEntity> {
+     fun makeItemListFromResource(_context: Context): List<ItemEntity> {
         val itemsFromResource = _context.resources.getStringArray(R.array.default_item_list)
         return List(itemsFromResource.size) { index ->
             parseToItem(index, itemsFromResource[index])
@@ -53,9 +53,11 @@ class MyModel {
     fun makeItemList(_context: Context):List<ItemEntity>{
         val roomList = dao.getAll()
         val list = roomList.value ?: emptyList()
-        val resultlist = if(list.isEmpty()){ makeItemListFromResource(_context)}
-        else {
-            Log.i("model","list was made by resource array.")
+        val resultlist = if(list.isEmpty()){
+            Log.i("model","list was made by  resource array")
+            makeItemListFromResource(_context)
+        } else {
+            Log.i("model","list was loaded from room")
             list
         }
         return resultlist
@@ -107,7 +109,7 @@ class MyModel {
             }
         }
     }
-    fun makeCategoryList(list:List<ItemEntity> ) : List<String>{
+    fun makeCategoryList( list:List<ItemEntity> ) : List<String>{
         val categoryList = List(list.size){index-> list[index].category}
         return categoryList.distinct()
     }
@@ -125,20 +127,11 @@ class MyModel {
         preferenceEditor.putString(CURRENT_CATEGORY,_category)
         preferenceEditor.apply()
     }
-    fun loadCurrentCategory(_context: Context):String{
-        val preferences = _context.getSharedPreferences(REWARD_HISTORY, Context.MODE_PRIVATE)
-        return preferences?.getString(CURRENT_CATEGORY,"") ?: ""
-    }
+
     fun loadCategoryFromPreference(_context: Context):String {
         val preferences = _context.getSharedPreferences(CURRENT_CATEGORY, Context.MODE_PRIVATE)
-        return preferences?.getString(REWARD_HISTORY, "") ?: ""
+        return preferences?.getString(CURRENT_CATEGORY, "") ?: ""
     }
-    fun saveCategoryToPreference(_category:String,_context: Context){
-        val preferenceEditor = _context.getSharedPreferences(REWARD_HISTORY, Context.MODE_PRIVATE).edit()
-        preferenceEditor.putString(CURRENT_CATEGORY, _category)
-        preferenceEditor.apply()
-    }
-
     fun appendDateToItem(itemEntity: ItemEntity, dateStr:String) {
         val dateList = itemEntity.history.split(",").toMutableList()
         if(dateStr.matches("20[0-9]{2}/([1-9]|1[0-2])/([1-9]|[12][0-9]|3[01])".toRegex())){
