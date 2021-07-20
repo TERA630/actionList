@@ -7,4 +7,14 @@
         android:orderInCategory="100"
         android:title="@string/action_settings"
         app:showAsAction="never" />
+    <item
+        android:id="@+id/action_make_list_from_resource"
+        android:orderInCategory="100"
+        android:title="@string/make_list_fromResource"
+        app:showAsAction="never" />
+    <item
+        android:id="@+id/action_clear_items"
+        android:orderInCategory="100"
+        android:title="@string/action_settings"
+        app:showAsAction="never" />
 </menu>

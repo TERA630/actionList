@@ -1,5 +1,6 @@
 package io.terameteo.actionlist
 import android.content.Context
+import android.util.Log
 import androidx.lifecycle.*
 import io.terameteo.actionlist.model.*
 import kotlinx.coroutines.Dispatchers
@@ -17,7 +18,6 @@ class MainViewModel() : ViewModel() {
 
     // LiveData
     lateinit var liveList:LiveData<List<ItemEntity>>
-    lateinit var bindList:MediatorLiveData<List<ItemEntity>>
     private val currentReward:MutableLiveData<Int> = MutableLiveData(0)
     val currentRewardStr = MediatorLiveData<String>()
     val currentPage = MutableLiveData(0)
@@ -50,17 +50,19 @@ class MainViewModel() : ViewModel() {
                 if( liveList.value.isNullOrEmpty()) {
                     // Roomから得たリストが空やNULLならばリソースからリスト作成
                     val list = myModel.makeItemListFromResource(_context)
-                    currentCategories.addAll(myModel.makeCategoryList(list))
+                    list.forEach { item ->
+                        myModel.insertItem(item)
+                    }
+                    liveList = myModel.dao.getAll()
+                }
             }
         }
-
-
     }
     fun stateSave(_context: Context) {
         val reward = currentReward.value ?:0
         myModel.saveRewardToPreference(reward,_context)
         myModel.saveCurrentCategory(currentCategory.value ?:"",_context)
-        val list = List(liveList.value?.size ?:0 ){
+/*        val list = List(liveList.value?.size ?:0 ){
                 index -> liveList.safetyGet(index)
         }
         viewModelScope.launch {
@@ -69,7 +71,7 @@ class MainViewModel() : ViewModel() {
                 myModel.insertItem(list[i])
             }
             }
-        }
+        }*/
     }
     // クリックでその日の完了/未完了を切り替える｡ dateStr YYYY/m/d
     fun flipItemHistory(item:ItemEntity,dateStr: String){
@@ -88,24 +90,15 @@ class MainViewModel() : ViewModel() {
         if(newTitle.isBlank()) return
         val newCategory = if(category.isBlank())  "Daily" else category
         val newItem = ItemEntity(title = newTitle,reward = newReward,category = newCategory)
-        val list = liveList.value?.toMutableList() ?: emptyList<ItemEntity>().toMutableList()
-        list.add(newItem)
-        liveList.postValue(list)
-    }
-
-    fun filterItemBy(category: String){
         viewModelScope.launch {
-            val list = myModel.makeListByCategory(category)
-            liveList.postValue(list)
+            withContext(Dispatchers.IO)
+            {
+                myModel.insertItem(newItem)
+            }
         }
-
-        }
+    }
 }
- 
-
-
 // LiveDataの拡張関数 Static method
-
 fun MutableLiveData<Int>.valueOrZero() : Int{
     return this.value ?: 0
 }
@@ -117,6 +110,17 @@ fun MutableLiveData<List<ItemEntity>>.safetyGet(position:Int): ItemEntity {
         list[position]
     }
 }
+
+fun LiveData<List<ItemEntity>>.safetyGet(position:Int): ItemEntity {
+    val list = this.value
+    return if (list.isNullOrEmpty()) {
+        Log.w(VIEW_MODEL,"safetyGet $position was failed.")
+        ItemEntity(title = ERROR_TITLE,category = ERROR_CATEGORY)
+    } else {
+        list[position]
+    }
+}
+
 //  ViewModel: Activity再生成や回転で破棄されない独自のLifecycleで管理されるClass(ViewModelLifeCycle)
 //  retainInstance = trueなHolderFragmentにキャッシュされているらしい｡
 //  各Activity固有｡ 同じActivityのFragmentでは共有できる｡

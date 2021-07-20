@@ -16,6 +16,7 @@
     <string name="append">追加</string>
     <string name="done">○</string>
     <string name="undone">×</string>
+    <string name="make_list_fromResource">サンプルのリストを作成する</string>
 
     <string name="titleCaption">行うことのタイトル</string>
     <string name="rewardCaption">達成時の報酬</string>

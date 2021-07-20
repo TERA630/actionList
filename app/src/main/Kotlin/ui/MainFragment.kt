@@ -73,7 +73,7 @@ class MainFragment : Fragment() {
         mBinding.spinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener{
             override fun onItemSelected(parent: AdapterView<*>, view: View, position: Int, id: Long) {
                 val category = parent.selectedItem.toString()
-                mViewModel.filterItemBy(category)
+                mViewModel.currentCategory.postValue(category)
             }
             override fun onNothingSelected(parent: AdapterView<*>?) {
                 Log.i(VIEW_MODEL,"no category selected")

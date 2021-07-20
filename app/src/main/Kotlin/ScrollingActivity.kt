@@ -14,32 +14,33 @@ const val DETAIL_WINDOW = "detailWindow"
 const val HISTORY_WINDOW = "historyWindow"
 
 class ScrollingActivity : AppCompatActivity() {
-    private val viewModel: MainViewModel by viewModels() // activity-ktx
-    private lateinit var binding: ActivityScrollingBinding
+    private val mViewModel: MainViewModel by viewModels() // activity-ktx
+    private lateinit var mBinding: ActivityScrollingBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        viewModel.initialize(this)
-        viewModel.currentPage.postValue(9)
-        binding = ActivityScrollingBinding.inflate(layoutInflater)
-        setContentView(binding.root)
+        mViewModel.initialize(this)
+        mViewModel.currentPage.postValue(9)
+        mBinding = ActivityScrollingBinding.inflate(layoutInflater)
+        setContentView(mBinding.root)
         setSupportActionBar(findViewById(R.id.toolbar))
-        binding.toolbarLayout.title = title
-        // Event Handler
-        binding.fab.setOnClickListener { view ->
+        mBinding.toolbarLayout.title = title
+
+        // コマンド処理
+        mBinding.fab.setOnClickListener { view ->
             Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
                 .setAction("Action", null).show()
         }
         wakeMainFragment()
         //　データ更新時の処理
-        viewModel.currentRewardStr.observe(this){
-            binding.rewardText.text = it
+        mViewModel.currentRewardStr.observe(this){
+            mBinding.rewardText.text = it
         }
 
     }
 
     override fun onPause() {
-        viewModel.stateSave(this)
+        mViewModel.stateSave(this)
         super.onPause()
     }
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
@@ -72,6 +73,3 @@ class ScrollingActivity : AppCompatActivity() {
         transaction.commit()
     }
 }
-
-// if ( arg == null) {} else {}
-// arg ?.let ?:run {}

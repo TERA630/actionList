@@ -11,7 +11,7 @@ import io.terameteo.actionlist.databinding.GridPlainBinding
 import io.terameteo.actionlist.model.isDoneAt
 import io.terameteo.actionlist.safetyGet
 
-class HistoryAdaptor(private val viewModel: MainViewModel)
+class HistoryAdaptor(private val mViewModel: MainViewModel)
     :RecyclerView.Adapter<RecyclerView.ViewHolder>() {
     override fun getItemCount(): Int = 40
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
@@ -39,17 +39,17 @@ class HistoryAdaptor(private val viewModel: MainViewModel)
     class GridViewHolder( binding: GridPlainBinding) :RecyclerView.ViewHolder(binding.root){
     }
     private fun bindHeaderDate(column:Int,view: TextView){
-        if (column >= 1 ) view.text = viewModel.dateShortList[column - 1]  // × =>
+        if (column >= 1 ) view.text = mViewModel.dateShortList[column - 1]  // × =>
     }
     private fun bindItemTitle(row:Int, view: TextView){
-        view.text = viewModel.liveList.safetyGet(row).title
+        view.text = mViewModel.liveList.safetyGet(row).title
     }
     private fun bindItemLog(row:Int, column: Int,view: TextView){
-        val item = viewModel.liveList.safetyGet(row)
-        val dateStr = "2021/" + viewModel.dateShortList[column-1]
+        val item = mViewModel.liveList.safetyGet(row)
+        val dateStr = "2021/" + mViewModel.dateShortList[column-1]
         view.text = if (item.isDoneAt(dateStr)) {  view.resources.getString(R.string.done)} else { view.resources.getString(R.string.undone)}
         view.setOnClickListener {
-            viewModel.flipItemHistory(item,dateStr)
+            mViewModel.flipItemHistory(item,dateStr)
             notifyItemChanged(row + column * 5)
         }
     }
