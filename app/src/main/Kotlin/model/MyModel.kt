@@ -15,6 +15,7 @@ const val ERROR_TITLE = "error title"
 const val ERROR_CATEGORY = "error category"
 const val REWARD_HISTORY = "rewardHistory"
 const val CURRENT_CATEGORY = "currentCategory"
+const val CATEGORY_LIST = "categoryList"
 
 class MyModel {
     lateinit var db: ItemCollectionDB
@@ -127,7 +128,23 @@ class MyModel {
         preferenceEditor.putString(CURRENT_CATEGORY,_category)
         preferenceEditor.apply()
     }
-
+    fun saveCategories(list:List<String>, _context: Context){
+        val string  = list.joinToString(",")
+        val preferenceEditor = _context.getSharedPreferences(CATEGORY_LIST, Context.MODE_PRIVATE).edit()
+        preferenceEditor.putString(CATEGORY_LIST,string)
+        preferenceEditor.apply()
+    }
+    fun loadCategories(_context: Context) : List<String>{
+        val preferences = _context.getSharedPreferences(CATEGORY_LIST, Context.MODE_PRIVATE)
+        val categoryStr =  preferences?.getString(CATEGORY_LIST,"") ?: ""
+        val list =  categoryStr.split(",")
+        return if(list.isNullOrEmpty()) {
+            Log.w("model","category was empty")
+            listOf("daily")
+        } else {
+            list
+        }
+    }
     fun loadCategoryFromPreference(_context: Context):String {
         val preferences = _context.getSharedPreferences(CURRENT_CATEGORY, Context.MODE_PRIVATE)
         return preferences?.getString(CURRENT_CATEGORY, "") ?: ""
@@ -155,3 +172,4 @@ class MyModel {
 
     }
 }
+
