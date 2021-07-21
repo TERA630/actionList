@@ -62,16 +62,16 @@ class MainViewModel() : ViewModel() {
         val reward = currentReward.value ?:0
         myModel.saveRewardToPreference(reward,_context)
         myModel.saveCurrentCategory(currentCategory.value ?:"",_context)
-/*        val list = List(liveList.value?.size ?:0 ){
-                index -> liveList.safetyGet(index)
-        }
+      val list = List(liveList.value?.size ?:0 ) { i ->
+          liveList.safetyGet(i)
+      }
         viewModelScope.launch {
             withContext(Dispatchers.IO){
             for(i in list.indices) {
                 myModel.insertItem(list[i])
             }
             }
-        }*/
+        }
     }
     // クリックでその日の完了/未完了を切り替える｡ dateStr YYYY/m/d
     fun flipItemHistory(item:ItemEntity,dateStr: String){

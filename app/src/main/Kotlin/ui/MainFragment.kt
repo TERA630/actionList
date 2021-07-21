@@ -93,11 +93,12 @@ class MainFragment : Fragment() {
     }
     private fun swipeLeft(){
         val page = mViewModel.currentPage.valueOrZero()
-        if (page >= 1) mViewModel.currentPage.postValue(page-1)
+        if (page < 9) mViewModel.currentPage.postValue(page+1)
+
     }
     private fun swipeRight(){
         val page = mViewModel.currentPage.valueOrZero()
-        if (page < 9) mViewModel.currentPage.postValue(page+1)
+        if (page >= 1) mViewModel.currentPage.postValue(page-1)
     }
     //  e1 Scrollの起点 e2 現在の場所
 }
