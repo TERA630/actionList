@@ -6,6 +6,7 @@ import androidx.room.*
 
 // Livedataで返す様にすると､ スレッドを分けなくてもよくなる｡
 
+const val DEFAULT_CATEGORY= "daily"
 
 @Dao
 interface ItemCollectionDAO {
@@ -19,6 +20,9 @@ interface ItemCollectionDAO {
     /** データ更新 */
     @Update
     fun update(item: ItemEntity)
+    @Update
+    fun updateList(list:List<ItemEntity>)
+
     /** データ追加 */
     @Insert (onConflict = OnConflictStrategy.REPLACE) // 同じアイテムを追加すると上書き
     fun insert(item: ItemEntity)

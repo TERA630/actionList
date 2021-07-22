@@ -8,10 +8,12 @@ import androidx.appcompat.app.AppCompatActivity
 import com.google.android.material.snackbar.Snackbar
 import io.terameteo.actionlist.databinding.ActivityScrollingBinding
 import io.terameteo.actionlist.ui.MainFragment
+import ui.CategoryFragment
 
 const val MAIN_WINDOW = "mainWindow"
 const val DETAIL_WINDOW = "detailWindow"
 const val HISTORY_WINDOW = "historyWindow"
+const val CATEGORY_WINDOW = "categoryWindow"
 
 class ScrollingActivity : AppCompatActivity() {
     private val mViewModel: MainViewModel by viewModels() // activity-ktx
@@ -55,13 +57,17 @@ class ScrollingActivity : AppCompatActivity() {
 
         return when (item.itemId) {
             R.id.action_settings -> true
+            R.id.action_make_category_list->{
+                toCategoryFragment()
+                true
+            }
             else -> super.onOptionsItemSelected(item)
         }
     }
     private fun wakeMainFragment() {
         val transaction = supportFragmentManager.beginTransaction()
         val fragmentOrNull =
-            supportFragmentManager.findFragmentByTag(MAIN_WINDOW) as MainFragment?
+            supportFragmentManager.findFragmentByTag(MAIN_WINDOW)
 
         if (fragmentOrNull == null) {
             // Fragmentがまだインスタンス化されてなければ(初回起動)
@@ -72,4 +78,12 @@ class ScrollingActivity : AppCompatActivity() {
         }
         transaction.commit()
     }
+    private fun toCategoryFragment(){
+        val transaction = supportFragmentManager.beginTransaction()
+        val fragment = supportFragmentManager.findFragmentByTag(CATEGORY_WINDOW) ?: CategoryFragment()
+        transaction.replace(R.id.baseFrame,fragment)
+        transaction.commit()
+    }
+
+
 }

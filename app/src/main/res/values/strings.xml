@@ -17,7 +17,7 @@
     <string name="done">○</string>
     <string name="undone">×</string>
     <string name="make_list_fromResource">サンプルのリストを作成する</string>
-    <string name="make_category_list">カテゴリーリストをアイテムから作成する</string>
+    <string name="edit_category_list">カテゴリーを編集する</string>
 
     <string name="titleCaption">行うことのタイトル</string>
     <string name="rewardCaption">達成時の報酬</string>
@@ -48,4 +48,6 @@
     </string-array>
     <!-- contents  -->
     <string name="pushToHistory">History Fragmentへ移動</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>

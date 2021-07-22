@@ -13,7 +13,6 @@ import io.terameteo.actionlist.*
 import io.terameteo.actionlist.R
 import io.terameteo.actionlist.databinding.FragmentMainBinding
 
-// TODO Category選択時のPost
 @SuppressLint("ClickableViewAccessibility")
 class MainFragment : Fragment() {
     private val mViewModel: MainViewModel by activityViewModels()
@@ -30,10 +29,8 @@ class MainFragment : Fragment() {
             justifyContent = JustifyContent.FLEX_START
             alignItems = AlignItems.FLEX_START
         }
-        // コマンド処理
 
         // bind View
-
         mBinding.firstPageList.layoutManager = flexBoxLayoutManager
         mAdaptor = MainListAdaptor(viewModel = mViewModel,mViewModel.dateEnList[mViewModel.currentPage.valueOrZero()])
         mBinding.firstPageList.adapter = mAdaptor
@@ -91,10 +88,16 @@ class MainFragment : Fragment() {
 
         return mBinding.root
     }
+
+    override fun onPause() {
+        val list = mAdaptor.currentList
+        mViewModel.saveListToRoom(list)
+        Log.i(MAIN_WINDOW,"mainFragment was paused.")
+        super.onPause()
+    }
     private fun swipeLeft(){
         val page = mViewModel.currentPage.valueOrZero()
         if (page < 9) mViewModel.currentPage.postValue(page+1)
-
     }
     private fun swipeRight(){
         val page = mViewModel.currentPage.valueOrZero()

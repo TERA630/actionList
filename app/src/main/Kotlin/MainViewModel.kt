@@ -3,9 +3,7 @@ import android.content.Context
 import android.util.Log
 import androidx.lifecycle.*
 import io.terameteo.actionlist.model.*
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
+import kotlinx.coroutines.*
 
 const val  VIEW_MODEL = "mainViewModel"
 
@@ -14,15 +12,14 @@ class MainViewModel() : ViewModel() {
     val dateJpList = MutableList(10){"1970年1月1日(木)"}
     val dateEnList = MutableList(10){"1970/1/1"}
     val dateShortList = MutableList(7){"1/1"}
-    val currentCategories = mutableListOf<String>()
-
+    lateinit var currentCategories:MutableList<String>
+    private val  viewModelIOScope =  CoroutineScope(Job() + viewModelScope.coroutineContext + Dispatchers.IO)
     // LiveData
     lateinit var liveList:LiveData<List<ItemEntity>>
     private val currentReward:MutableLiveData<Int> = MutableLiveData(0)
     val currentRewardStr = MediatorLiveData<String>()
     val currentPage = MutableLiveData(0)
     val currentCategory = MutableLiveData<String>("")
-
 
     fun initialize(_context:Context) {
         myModel.initializeDB(_context)
@@ -38,9 +35,9 @@ class MainViewModel() : ViewModel() {
         currentReward.postValue(myModel.loadRewardFromPreference(_context))
         currentRewardStr.addSource(currentReward) { value -> currentRewardStr.postValue("$value　円") }
         currentCategory.postValue(myModel.loadCategoryFromPreference(_context))
+        currentCategories = myModel.loadCategories(_context).toMutableList()
 
-        viewModelScope.launch {
-            withContext(Dispatchers.IO){
+        viewModelIOScope.launch {
                 val category = currentCategory.value ?:""
                 if(category.isBlank()) {
                     liveList = myModel.dao.getAll()
@@ -55,37 +52,32 @@ class MainViewModel() : ViewModel() {
                     }
                     liveList = myModel.dao.getAll()
                 }
-            }
         }
+
+
     }
     fun stateSave(_context: Context) {
         val reward = currentReward.value ?:0
         myModel.saveRewardToPreference(reward,_context)
         myModel.saveCurrentCategory(currentCategory.value ?:"",_context)
-      val list = List(liveList.value?.size ?:0 ) { i ->
-          liveList.safetyGet(i)
-      }
-        viewModelScope.launch {
-            withContext(Dispatchers.IO){
-            for(i in list.indices) {
-                myModel.insertItem(list[i])
-            }
-            }
-        }
+        myModel.saveCategories(currentCategories,_context)
     }
-    // クリックでその日の完了/未完了を切り替える｡ dateStr YYYY/m/d
+
     fun flipItemHistory(item:ItemEntity,dateStr: String){
+        // クリックでその日の完了/未完了を切り替える｡ dateStr YYYY/m/d
         val currentValue =  currentReward.valueOrZero()
-        val newValue = if ( item.isDoneAt(dateStr)) {
+        val newValue = if ( item.isDoneAt(dateStr) ) {
             // アイテムがチェック済み チェックをはずす
             myModel.deleteDateFromItem(item,dateStr)
             currentValue - item.reward
         } else {
+            // アイテムが未チェック､チェックをつける
             myModel.appendDateToItem(item,dateStr)
             currentValue + item.reward
         }
         currentReward.postValue(newValue)
     }
+
     fun appendItem(newTitle:String,newReward:Int,category:String){
         if(newTitle.isBlank()) return
         val newCategory = if(category.isBlank())  "Daily" else category
@@ -96,6 +88,14 @@ class MainViewModel() : ViewModel() {
                 myModel.insertItem(newItem)
             }
         }
+    }
+    fun saveListToRoom(_list:List<ItemEntity>){
+        viewModelIOScope.launch {
+            myModel.dao.updateList(_list)
+        }
+    }
+    fun makeCategoryFromList(_list:List<ItemEntity>){
+        currentCategories = myModel.makeCategoryList(_list).toMutableList()
     }
 }
 // LiveDataの拡張関数 Static method
@@ -118,6 +118,15 @@ fun LiveData<List<ItemEntity>>.safetyGet(position:Int): ItemEntity {
         ItemEntity(title = ERROR_TITLE,category = ERROR_CATEGORY)
     } else {
         list[position]
+    }
+}
+fun LiveData<List<ItemEntity>>.safetyGetList():List<ItemEntity> {
+    val list = this.value
+    if (list.isNullOrEmpty()) {
+        Log.w(VIEW_MODEL, "livaData list  was empty.")
+        return listOf(ItemEntity(title = ERROR_TITLE,category = DEFAULT_CATEGORY))
+    } else {
+        return list
     }
 }
 

@@ -1,3 +1,4 @@
+
 package io.terameteo.actionlist.model
 
 import android.content.Context
@@ -16,6 +17,9 @@ const val ERROR_CATEGORY = "error category"
 const val REWARD_HISTORY = "rewardHistory"
 const val CURRENT_CATEGORY = "currentCategory"
 const val CATEGORY_LIST = "categoryList"
+
+const val MY_MODEL="myModel"
+const val DEFAULT_REWARD = 30
 
 class MyModel {
     lateinit var db: ItemCollectionDB
@@ -51,36 +55,6 @@ class MyModel {
             parseToItem(index, itemsFromResource[index])
         }
     }
-    fun makeItemList(_context: Context):List<ItemEntity>{
-        val roomList = dao.getAll()
-        val list = roomList.value ?: emptyList()
-        val resultlist = if(list.isEmpty()){
-            Log.i("model","list was made by  resource array")
-            makeItemListFromResource(_context)
-        } else {
-            Log.i("model","list was loaded from room")
-            list
-        }
-        return resultlist
-    }
-    fun makeListByCategory (_category: String) :List<ItemEntity>{
-        val roomList = dao.getByCategory(_category)
-        val list = roomList.value ?: emptyList()
-        if(list.isEmpty()){
-            Log.w("model","no filtered item were got")
-        } else {
-            Log.i("model","${list.size} of items are got by filter")
-        }
-        return list
-    }
-    fun getAllItem():List<ItemEntity>{
-        val roomList = dao.getAll()
-        val list = roomList.value ?: emptyList()
-        if(list.isEmpty()){
-            Log.w("model","Item is empty")
-        } else { Log.i("model","${list.size} of items are got by all item") }
-        return list
-    }
     fun insertItem(itemEntity: ItemEntity){
         dao.insert(itemEntity)
     }
@@ -90,13 +64,16 @@ class MyModel {
         // 出力： storedItem (title,reward,category,finishedHistory )を返す｡
         val elementList = _string.split(";").toMutableList()
         // 文字列が規則に従っているか
-        if (elementList.lastIndex<2) {return ItemEntity(title = ERROR_TITLE)} // title, reward  Category がなければ追加せず
+        if (elementList.lastIndex<2) {
+            Log.w(MY_MODEL,"Invalid String was passed parseToItem.")
+            return ItemEntity(title = ERROR_TITLE)
+        } // title, reward  Category がなければ追加せず
 
         val title = if(elementList[0].isBlank()) ERROR_TITLE else elementList[0].trim()
-        val reward = if(elementList[1].isDigitsOnly())  elementList[1].toInt() else 0
+        val reward = if(elementList[1].isDigitsOnly())  elementList[1].toInt() else DEFAULT_REWARD
         val category = if(elementList[2].isBlank()) ERROR_CATEGORY else elementList[2].trim()
 
-        return if (elementList.lastIndex ==2) {
+        return if (elementList.lastIndex == 2 ) {
             // historyが無い場合
             ItemEntity(id, title,reward,category,history = "")
         } else {
@@ -139,8 +116,8 @@ class MyModel {
         val categoryStr =  preferences?.getString(CATEGORY_LIST,"") ?: ""
         val list =  categoryStr.split(",")
         return if(list.isNullOrEmpty()) {
-            Log.w("model","category was empty")
-            listOf("daily")
+            Log.w(MY_MODEL,"category was empty")
+            listOf(DEFAULT_CATEGORY)
         } else {
             list
         }
@@ -157,7 +134,7 @@ class MyModel {
             val newDateList = dateList.joinToString(",")
             itemEntity.history = newDateList
         } else {
-            Log.w("model","date Appending was fail")
+            Log.w(MY_MODEL,"Appending $dateList of ${itemEntity.id} was fail")
         }
     }
     fun deleteDateFromItem(itemEntity:ItemEntity, dateStr: String){
@@ -167,7 +144,7 @@ class MyModel {
             val newDateList = dateList.joinToString (",")
             itemEntity.history = newDateList
         } else {
-            Log.w("model","date deleting was fail")
+            Log.w(MY_MODEL,"deleting $dateList of ${itemEntity.id} was fail")
         }
 
     }
