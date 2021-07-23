@@ -6,6 +6,6 @@
         android:endColor="@color/colorSilverDark"
         android:startColor="@color/colorSilver" />
     <stroke
-        android:width="3dp"
+        android:width="@dimen/flex_item_border"
         android:color="@color/colorSilverEdge" />
 </shape>

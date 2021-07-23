@@ -6,7 +6,7 @@
         android:endColor="@color/colorGoldDark"
         android:startColor="@color/colorGold" />
     <stroke
-        android:width="3dp"
+        android:width="@dimen/flex_item_border"
         android:color="@color/colorGoldEdge" />
 
 </shape>

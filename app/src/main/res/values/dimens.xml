@@ -9,4 +9,5 @@
     <dimen name="item_padding">8dp</dimen>
     <dimen name="padding_detailFragment">8dp</dimen>
     <dimen name="ui_component_height">48dp</dimen>
+    <dimen name="flex_item_border">3dp</dimen>
 </resources>
