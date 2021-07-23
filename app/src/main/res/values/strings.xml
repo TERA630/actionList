@@ -4,6 +4,7 @@
     <string name="reward_placeHolder">%1d円</string>
     <string name="save">保存</string>
     <string name="cancel">破棄</string>
+    <string name="back">戻る</string>
     <string name="press_to_append">Press to append item</string>
     <!-- メニューアイテム-->
     <string name="menu_routineOfTheDay">曜日ごとのルーチン作業を登録</string>
@@ -48,6 +49,4 @@
     </string-array>
     <!-- contents  -->
     <string name="pushToHistory">History Fragmentへ移動</string>
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>

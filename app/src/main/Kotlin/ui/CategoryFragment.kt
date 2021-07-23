@@ -26,6 +26,8 @@ class CategoryFragment : Fragment() {
         mBinding.categoryList.adapter =CategoryListAdaptor(mViewModel)
 
         return mBinding.root
+
+
     }
 
 
