@@ -12,7 +12,7 @@
         android:id="@+id/toMainButton"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:srcCompat="@android:drawable/ic_menu_sort_by_size" />
+        app:srcCompat="@drawable/ic_daily" />
 <Spinner
     android:id="@+id/spinnerOfHistory"
     android:layout_width="wrap_content"

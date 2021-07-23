@@ -4,15 +4,16 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import android.widget.TextView
 import androidx.core.content.res.ResourcesCompat
+import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import io.terameteo.actionlist.MainViewModel
 import io.terameteo.actionlist.R
 import io.terameteo.actionlist.databinding.GridPlainBinding
+import io.terameteo.actionlist.model.ItemEntity
 import io.terameteo.actionlist.model.isDoneAt
-import io.terameteo.actionlist.safetyGet
 
 class HistoryAdaptor(private val mViewModel: MainViewModel)
-    :RecyclerView.Adapter<RecyclerView.ViewHolder>() {
+    : ListAdapter<ItemEntity, RecyclerView.ViewHolder>(DiffCallback){
     override fun getItemCount(): Int = 40
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         val layoutInflater = LayoutInflater.from(parent.context)
@@ -42,10 +43,11 @@ class HistoryAdaptor(private val mViewModel: MainViewModel)
         if (column >= 1 ) view.text = mViewModel.dateShortList[column - 1]  // × =>
     }
     private fun bindItemTitle(row:Int, view: TextView){
-        view.text = mViewModel.liveList.safetyGet(row).title
+        val item = getItem(row)
+        view.text = item.title
     }
     private fun bindItemLog(row:Int, column: Int,view: TextView){
-        val item = mViewModel.liveList.safetyGet(row)
+        val item = getItem(row)
         val dateStr = "2021/" + mViewModel.dateShortList[column-1]
         view.text = if (item.isDoneAt(dateStr)) {  view.resources.getString(R.string.done)} else { view.resources.getString(R.string.undone)}
         view.setOnClickListener {
@@ -54,6 +56,7 @@ class HistoryAdaptor(private val mViewModel: MainViewModel)
         }
     }
 }
+
 //                                column          row
 // GridLayout VERTICAL(Span3)    0 1 2   HORIZON 0  3  6
 //                               3 4 5    column 1  4  7

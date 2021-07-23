@@ -5,10 +5,10 @@ import android.view.Menu
 import android.view.MenuItem
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import androidx.navigation.findNavController
 import com.google.android.material.snackbar.Snackbar
 import io.terameteo.actionlist.databinding.ActivityScrollingBinding
 import io.terameteo.actionlist.ui.MainFragment
-import ui.CategoryFragment
 
 const val MAIN_WINDOW = "mainWindow"
 const val DETAIL_WINDOW = "detailWindow"
@@ -58,7 +58,7 @@ class ScrollingActivity : AppCompatActivity() {
         return when (item.itemId) {
             R.id.action_settings -> true
             R.id.action_make_category_list->{
-                toCategoryFragment()
+                findNavController(R.id.mainFragmentContainer).navigate(R.id.action_mainFragment_to_categoryFragment)
                 true
             }
             else -> super.onOptionsItemSelected(item)
@@ -78,12 +78,9 @@ class ScrollingActivity : AppCompatActivity() {
         }
         transaction.commit()
     }
-    private fun toCategoryFragment(){
-        val transaction = supportFragmentManager.beginTransaction()
-        val fragment = supportFragmentManager.findFragmentByTag(CATEGORY_WINDOW) ?: CategoryFragment()
-        transaction.replace(R.id.baseFrame,fragment)
-        transaction.commit()
-    }
-
-
 }
+
+// ボタンのデフォルトの高さは48dp
+// 低優先度で42pix   中優先度 60px   高優先度 72px
+// ボタンの間隔は12～48px
+

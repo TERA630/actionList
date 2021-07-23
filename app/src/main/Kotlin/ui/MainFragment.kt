@@ -4,14 +4,16 @@ import android.annotation.SuppressLint
 import android.os.Bundle
 import android.util.Log
 import android.view.*
-import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
+import androidx.navigation.fragment.findNavController
 import com.google.android.flexbox.*
-import io.terameteo.actionlist.*
+import io.terameteo.actionlist.MAIN_WINDOW
+import io.terameteo.actionlist.MainViewModel
 import io.terameteo.actionlist.R
 import io.terameteo.actionlist.databinding.FragmentMainBinding
+import io.terameteo.actionlist.valueOrZero
 
 @SuppressLint("ClickableViewAccessibility")
 class MainFragment : Fragment() {
@@ -40,17 +42,8 @@ class MainFragment : Fragment() {
         mBinding.spinner.adapter = arrayAdapter
 
         // コマンド処理
-        mBinding.imageButton.setOnClickListener {
-            val transaction = parentFragmentManager.beginTransaction()
-            val fragmentOrNull = parentFragmentManager.findFragmentByTag(HISTORY_WINDOW) as HistoryFragment?
-            if(fragmentOrNull == null){
-                val fragment = HistoryFragment.newInstance()
-                transaction.replace(R.id.baseFrame,fragment)
-            } else {
-                transaction.replace(R.id.baseFrame,fragmentOrNull)
-            }
-            transaction.addToBackStack(null)
-            transaction.commit()
+        mBinding.toHistoryButton.setOnClickListener {
+            findNavController().navigate(R.id.action_mainFragment_to_historyFragment)
         }
         val listener = object :GestureDetector.SimpleOnGestureListener(){
             override fun onFling(e1: MotionEvent, e2: MotionEvent, velocityX: Float, velocityY: Float): Boolean {
@@ -67,25 +60,19 @@ class MainFragment : Fragment() {
            mGestureDetector.onTouchEvent(event)
             true
         }
-        mBinding.spinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener{
-            override fun onItemSelected(parent: AdapterView<*>, view: View, position: Int, id: Long) {
-                val category = parent.selectedItem.toString()
-                mViewModel.currentCategory.postValue(category)
-            }
-            override fun onNothingSelected(parent: AdapterView<*>?) {
-                Log.i(VIEW_MODEL,"no category selected")
-            }
 
-        }
         //　データ更新時のUI更新設定
         mViewModel.currentPage.observe(this.viewLifecycleOwner){
             mBinding.dateShowing.text = mViewModel.dateJpList[it]
             mAdaptor.dateStrChange(mViewModel.dateEnList[it])
         }
-        mViewModel.liveList.observe(viewLifecycleOwner){
-            mAdaptor.submitList(it)
+        mViewModel.allItemList.observe(viewLifecycleOwner){
+            val selectedCategory = mBinding.spinner.selectedItem as String
+            val list= if(selectedCategory.isBlank()) { it } else {
+                it.filter { itemEntity ->  itemEntity.category == selectedCategory }
+            }
+            mAdaptor.submitList(list)
         }
-
         return mBinding.root
     }
 

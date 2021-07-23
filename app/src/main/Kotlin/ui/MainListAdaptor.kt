@@ -50,7 +50,7 @@ class MainListAdaptor(private val viewModel: MainViewModel,private var dateStr:S
     }
 }
 
-private object DiffCallback : DiffUtil.ItemCallback<ItemEntity>() {
+object DiffCallback : DiffUtil.ItemCallback<ItemEntity>() {
     override fun areItemsTheSame(
         old: ItemEntity, new: ItemEntity ): Boolean {
         return old.id == new.id

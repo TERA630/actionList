@@ -2,7 +2,7 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/frameLayout"
+    android:id="@+id/frame_category"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".ScrollingActivity">
@@ -12,17 +12,18 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-        app:layout_constraintTop_toTopOf="parent"
+
         app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:layout_height="400dp"
         tools:itemCount="7" />
 
     <Button
-        android:id="@+id/button"
-        android:layout_width="106dp"
-        android:layout_height="30dp"
+        android:id="@+id/backToMain"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:text="@string/back"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

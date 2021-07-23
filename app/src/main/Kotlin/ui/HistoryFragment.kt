@@ -6,40 +6,33 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
-import io.terameteo.actionlist.MAIN_WINDOW
 import io.terameteo.actionlist.MainViewModel
 import io.terameteo.actionlist.R
 import io.terameteo.actionlist.databinding.FragmentHistoryBinding
 
 class HistoryFragment:Fragment() {
     private val mViewModel: MainViewModel by activityViewModels()
+    private lateinit var mAdaptor : HistoryAdaptor
     override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+        inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         // bind view
         val binding = FragmentHistoryBinding.inflate(inflater, container, false)
         binding.historyGrid.layoutManager = GridLayoutManager(binding.root.context,5,GridLayoutManager.HORIZONTAL,false)
-        binding.historyGrid.adapter = HistoryAdaptor(mViewModel)
+        mAdaptor = HistoryAdaptor(mViewModel)
+        binding.historyGrid.adapter = mAdaptor
         // コマンド処理
         binding.toMainButton.setOnClickListener {
-            val transaction = parentFragmentManager.beginTransaction()
-            val fragmentOrNull = parentFragmentManager.findFragmentByTag(MAIN_WINDOW) as MainFragment?
-            if(fragmentOrNull != null) transaction.replace(R.id.baseFrame,fragmentOrNull)
-            else {
-                val fragment = MainFragment()
-                transaction.addToBackStack(null)
-                transaction.replace(R.id.baseFrame,fragment)
+            findNavController( ).navigate(R.id.action_categoryFragment_to_mainFragment)
+        }
+        mViewModel.allItemList.observe(viewLifecycleOwner){
+            val selectedCategory = binding.spinnerOfHistory.selectedItem as String
+            val list= if(selectedCategory.isBlank()) { it } else {
+                it.filter { itemEntity ->  itemEntity.category == selectedCategory }
             }
-            transaction.commit()
+            mAdaptor.submitList(list)
         }
-
         return binding.root
-    }
-    companion object {
-        @JvmStatic
-        fun newInstance(): HistoryFragment {
-            val newFragment = HistoryFragment()
-            return newFragment
-        }
     }
 }

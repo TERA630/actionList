@@ -1,45 +1,69 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/mainFragmentContainer"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:orientation="vertical"
     tools:context=".ScrollingActivity"
     tools:layout="@layout/fragment_main">
+
     <Spinner
         android:id="@+id/spinner"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"/>
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="16dp"
+        app:layout_constraintBottom_toTopOf="@+id/dateShowing"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
         android:id="@+id/dateShowing"
-        android:layout_width="match_parent"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:layout_marginBottom="16dp"
         android:background="@drawable/square_green_gradient"
         android:textColor="@color/white"
         android:textSize="@dimen/top_label"
-        android:typeface="monospace"
         android:textStyle="bold"
-        android:layout_marginVertical="@dimen/activity_vertical_margin"
-        tools:text="@string/testDate"/>
+        android:typeface="monospace"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/spinner"
+        tools:text="@string/testDate" />
 
     <ImageButton
-        android:id="@+id/imageButton"
-        android:layout_width="match_parent"
+        android:id="@+id/toDailyButton"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        app:srcCompat="@android:drawable/ic_dialog_dialer"
-        android:contentDescription="@string/pushToHistory"/>
+        android:layout_marginStart="16dp"
+        android:contentDescription="@string/pushToHistory"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/dateShowing"
+        app:srcCompat="@drawable/ic_daily" />
+
+    <ImageButton
+        android:id="@+id/toHistoryButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/ic_weekly"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/dateShowing"
+        />
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/firstPageList"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginVertical="@dimen/activity_vertical_margin"
-        tools:listitem="@layout/item_test"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginBottom="51dp"
+        app:layout_constraintTop_toBottomOf="@id/toDailyButton"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        tools:layout_height="360dp"
         tools:itemCount="20"
-        tools:layoutManager="com.google.android.flexbox.FlexboxLayoutManager" >
+        tools:layoutManager="com.google.android.flexbox.FlexboxLayoutManager"
+        tools:listitem="@layout/item_test">
 
     </androidx.recyclerview.widget.RecyclerView>
-</LinearLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>

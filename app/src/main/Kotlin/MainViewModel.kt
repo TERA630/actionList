@@ -15,7 +15,7 @@ class MainViewModel() : ViewModel() {
     lateinit var currentCategories:MutableList<String>
     private val  viewModelIOScope =  CoroutineScope(Job() + viewModelScope.coroutineContext + Dispatchers.IO)
     // LiveData
-    lateinit var liveList:LiveData<List<ItemEntity>>
+    lateinit var allItemList:LiveData<List<ItemEntity>>
     private val currentReward:MutableLiveData<Int> = MutableLiveData(0)
     val currentRewardStr = MediatorLiveData<String>()
     val currentPage = MutableLiveData(0)
@@ -38,19 +38,20 @@ class MainViewModel() : ViewModel() {
         currentCategories = myModel.loadCategories(_context).toMutableList()
 
         viewModelIOScope.launch {
+                allItemList = myModel.dao.getAll()
                 val category = currentCategory.value ?:""
                 if(category.isBlank()) {
-                    liveList = myModel.dao.getAll()
+
                 } else {
-                    liveList = myModel.dao.getByCategory(category)
+                    allItemList = myModel.dao.getByCategory(category)
                 }
-                if( liveList.value.isNullOrEmpty()) {
+                if( allItemList.value.isNullOrEmpty()) {
                     // Roomから得たリストが空やNULLならばリソースからリスト作成
                     val list = myModel.makeItemListFromResource(_context)
                     list.forEach { item ->
                         myModel.insertItem(item)
                     }
-                    liveList = myModel.dao.getAll()
+                    allItemList = myModel.dao.getAll()
                 }
         }
 
@@ -130,7 +131,7 @@ fun LiveData<List<ItemEntity>>.safetyGetList():List<ItemEntity> {
     }
 }
 
-//  ViewModel: Activity再生成や回転で破棄されない独自のLifecycleで管理されるClass(ViewModelLifeCycle)
+//  ViewModel: Activity再生成や回転で破棄されない独自の長いLifecycleで管理されるClass(ViewModelLifeCycle)
 //  retainInstance = trueなHolderFragmentにキャッシュされているらしい｡
 //  各Activity固有｡ 同じActivityのFragmentでは共有できる｡
 //  負わせるべき役割
