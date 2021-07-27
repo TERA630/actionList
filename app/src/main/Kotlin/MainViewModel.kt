@@ -3,23 +3,27 @@ import android.content.Context
 import android.util.Log
 import androidx.lifecycle.*
 import io.terameteo.actionlist.model.*
-import kotlinx.coroutines.*
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.launch
 
 const val  VIEW_MODEL = "mainViewModel"
 
-class MainViewModel() : ViewModel() {
+class MainViewModel : ViewModel() {
     private val myModel by lazy { MyModel() }
     val dateJpList = MutableList(10){"1970年1月1日(木)"}
     val dateEnList = MutableList(10){"1970/1/1"}
     val dateShortList = MutableList(7){"1/1"}
-    lateinit var currentCategories:MutableList<String>
+
     private val  viewModelIOScope =  CoroutineScope(Job() + viewModelScope.coroutineContext + Dispatchers.IO)
     // LiveData
     lateinit var allItemList:LiveData<List<ItemEntity>>
     private val currentReward:MutableLiveData<Int> = MutableLiveData(0)
     val currentRewardStr = MediatorLiveData<String>()
     val currentPage = MutableLiveData(0)
-    val currentCategory = MutableLiveData<String>("")
+    val currentCategory = MutableLiveData("")
+    val usedCategories= MediatorLiveData<List<String>>()
 
     fun initialize(_context:Context) {
         myModel.initializeDB(_context)
@@ -35,35 +39,21 @@ class MainViewModel() : ViewModel() {
         currentReward.postValue(myModel.loadRewardFromPreference(_context))
         currentRewardStr.addSource(currentReward) { value -> currentRewardStr.postValue("$value　円") }
         currentCategory.postValue(myModel.loadCategoryFromPreference(_context))
-        currentCategories = myModel.loadCategories(_context).toMutableList()
-
         viewModelIOScope.launch {
                 allItemList = myModel.dao.getAll()
-                val category = currentCategory.value ?:""
-                if(category.isBlank()) {
-
-                } else {
-                    allItemList = myModel.dao.getByCategory(category)
-                }
-                if( allItemList.value.isNullOrEmpty()) {
-                    // Roomから得たリストが空やNULLならばリソースからリスト作成
-                    val list = myModel.makeItemListFromResource(_context)
-                    list.forEach { item ->
-                        myModel.insertItem(item)
-                    }
-                    allItemList = myModel.dao.getAll()
-                }
         }
+        usedCategories.addSource(allItemList){
+                value -> val list = myModel.makeCategoryList(value)
+                usedCategories.postValue(list)
 
-
+        }
     }
     fun stateSave(_context: Context) {
         val reward = currentReward.value ?:0
         myModel.saveRewardToPreference(reward,_context)
         myModel.saveCurrentCategory(currentCategory.value ?:"",_context)
-        myModel.saveCategories(currentCategories,_context)
-    }
 
+    }
     fun flipItemHistory(item:ItemEntity,dateStr: String){
         // クリックでその日の完了/未完了を切り替える｡ dateStr YYYY/m/d
         val currentValue =  currentReward.valueOrZero()
@@ -83,11 +73,8 @@ class MainViewModel() : ViewModel() {
         if(newTitle.isBlank()) return
         val newCategory = if(category.isBlank())  "Daily" else category
         val newItem = ItemEntity(title = newTitle,reward = newReward,category = newCategory)
-        viewModelScope.launch {
-            withContext(Dispatchers.IO)
-            {
+        viewModelIOScope.launch {
                 myModel.insertItem(newItem)
-            }
         }
     }
     fun saveListToRoom(_list:List<ItemEntity>){
@@ -95,8 +82,14 @@ class MainViewModel() : ViewModel() {
             myModel.dao.updateList(_list)
         }
     }
-    fun makeCategoryFromList(_list:List<ItemEntity>){
-        currentCategories = myModel.makeCategoryList(_list).toMutableList()
+    fun makeListFromResource(_context: Context){
+        viewModelIOScope.launch {
+            val list = myModel.makeItemListFromResource(_context)
+            list.forEach { item ->
+                myModel.insertItem(item)
+            }
+        }
+
     }
 }
 // LiveDataの拡張関数 Static method
@@ -123,12 +116,24 @@ fun LiveData<List<ItemEntity>>.safetyGet(position:Int): ItemEntity {
 }
 fun LiveData<List<ItemEntity>>.safetyGetList():List<ItemEntity> {
     val list = this.value
-    if (list.isNullOrEmpty()) {
+    return if (list.isNullOrEmpty()) {
         Log.w(VIEW_MODEL, "livaData list  was empty.")
-        return listOf(ItemEntity(title = ERROR_TITLE,category = DEFAULT_CATEGORY))
+        listOf(ItemEntity(title = ERROR_TITLE,category = DEFAULT_CATEGORY))
     } else {
-        return list
+        list
     }
+}
+fun MediatorLiveData<List<String>>.safetyGet(position: Int):String{
+    val category = this.value
+    return if ((category.isNullOrEmpty())) {
+        Log.w(VIEW_MODEL,"safetyGet $position was failed.")
+        ERROR_CATEGORY
+    } else {
+        category[position]
+    }
+
+
+
 }
 
 //  ViewModel: Activity再生成や回転で破棄されない独自の長いLifecycleで管理されるClass(ViewModelLifeCycle)

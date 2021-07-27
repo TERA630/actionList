@@ -11,28 +11,39 @@ import androidx.recyclerview.widget.GridLayoutManager
 import io.terameteo.actionlist.MainViewModel
 import io.terameteo.actionlist.R
 import io.terameteo.actionlist.databinding.FragmentHistoryBinding
+import io.terameteo.actionlist.safetyGetList
 
 class HistoryFragment:Fragment() {
     private val mViewModel: MainViewModel by activityViewModels()
     private lateinit var mAdaptor : HistoryAdaptor
+    private lateinit var mBinding:FragmentHistoryBinding
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         // bind view
-        val binding = FragmentHistoryBinding.inflate(inflater, container, false)
-        binding.historyGrid.layoutManager = GridLayoutManager(binding.root.context,5,GridLayoutManager.HORIZONTAL,false)
+
+        mBinding = FragmentHistoryBinding.inflate(inflater, container, false)
+        mBinding.historyGrid.layoutManager = GridLayoutManager(mBinding.root.context,5,GridLayoutManager.HORIZONTAL,false)
         mAdaptor = HistoryAdaptor(mViewModel)
-        binding.historyGrid.adapter = mAdaptor
+        mBinding.historyGrid.adapter = mAdaptor
+
+        return mBinding.root
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
         // コマンド処理
-        binding.toMainButton.setOnClickListener {
+        mBinding.toMainButton.setOnClickListener {
             findNavController( ).navigate(R.id.action_categoryFragment_to_mainFragment)
         }
         mViewModel.allItemList.observe(viewLifecycleOwner){
-            val selectedCategory = binding.spinnerOfHistory.selectedItem as String
-            val list= if(selectedCategory.isBlank()) { it } else {
-                it.filter { itemEntity ->  itemEntity.category == selectedCategory }
-            }
-            mAdaptor.submitList(list)
+            mAdaptor.submitList(it)
         }
-        return binding.root
+        mViewModel.currentCategory.observe(viewLifecycleOwner){
+            val list = mViewModel.allItemList.safetyGetList()
+            val filtered = list.filter { itemEntity -> itemEntity.category == it}
+            mAdaptor.submitList(filtered)
+        }
+
     }
 }

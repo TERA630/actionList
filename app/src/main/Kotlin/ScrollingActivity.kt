@@ -8,7 +8,6 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.navigation.findNavController
 import com.google.android.material.snackbar.Snackbar
 import io.terameteo.actionlist.databinding.ActivityScrollingBinding
-import io.terameteo.actionlist.ui.MainFragment
 
 const val MAIN_WINDOW = "mainWindow"
 const val DETAIL_WINDOW = "detailWindow"
@@ -33,7 +32,7 @@ class ScrollingActivity : AppCompatActivity() {
             Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
                 .setAction("Action", null).show()
         }
-        wakeMainFragment()
+      // wakeMainFragment()
         //　データ更新時の処理
         mViewModel.currentRewardStr.observe(this){
             mBinding.rewardText.text = it
@@ -61,22 +60,12 @@ class ScrollingActivity : AppCompatActivity() {
                 findNavController(R.id.mainFragmentContainer).navigate(R.id.action_mainFragment_to_categoryFragment)
                 true
             }
+            R.id.action_make_list_from_resource->{
+                mViewModel.makeListFromResource(this)
+                true
+            }
             else -> super.onOptionsItemSelected(item)
         }
-    }
-    private fun wakeMainFragment() {
-        val transaction = supportFragmentManager.beginTransaction()
-        val fragmentOrNull =
-            supportFragmentManager.findFragmentByTag(MAIN_WINDOW)
-
-        if (fragmentOrNull == null) {
-            // Fragmentがまだインスタンス化されてなければ(初回起動)
-            val fragment = MainFragment()
-            transaction.add(R.id.baseFrame,fragment)
-        } else {
-            transaction.replace(R.id.baseFrame,fragmentOrNull)
-        }
-        transaction.commit()
     }
 }
 

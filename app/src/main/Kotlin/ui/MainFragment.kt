@@ -4,25 +4,26 @@ import android.annotation.SuppressLint
 import android.os.Bundle
 import android.util.Log
 import android.view.*
-import android.widget.ArrayAdapter
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.google.android.flexbox.*
-import io.terameteo.actionlist.MAIN_WINDOW
-import io.terameteo.actionlist.MainViewModel
+import io.terameteo.actionlist.*
 import io.terameteo.actionlist.R
 import io.terameteo.actionlist.databinding.FragmentMainBinding
-import io.terameteo.actionlist.valueOrZero
 
 @SuppressLint("ClickableViewAccessibility")
 class MainFragment : Fragment() {
     private val mViewModel: MainViewModel by activityViewModels()
     private lateinit var mBinding: FragmentMainBinding
-    private lateinit var  mGestureDetector:GestureDetector
+    private lateinit var mGestureDetector: GestureDetector
     private lateinit var mAdaptor: MainListAdaptor
+    private lateinit var mCategoryAdaptor:CategoryListAdaptor
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
+    override fun onCreateView(
+        inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View {
         mBinding = FragmentMainBinding.inflate(inflater, container, false)
         val flexBoxLayoutManager = FlexboxLayoutManager(this.context).apply {
@@ -31,16 +32,21 @@ class MainFragment : Fragment() {
             justifyContent = JustifyContent.FLEX_START
             alignItems = AlignItems.FLEX_START
         }
-
         // bind View
         mBinding.firstPageList.layoutManager = flexBoxLayoutManager
-        mAdaptor = MainListAdaptor(viewModel = mViewModel,mViewModel.dateEnList[mViewModel.currentPage.valueOrZero()])
+        mAdaptor = MainListAdaptor(
+            viewModel = mViewModel,
+            mViewModel.dateEnList[mViewModel.currentPage.valueOrZero()]
+        )
         mBinding.firstPageList.adapter = mAdaptor
+        mCategoryAdaptor = CategoryListAdaptor(mViewModel)
+        mBinding.categoryList.layoutManager = LinearLayoutManager(this.requireContext(),RecyclerView.HORIZONTAL,false)
+        mBinding.categoryList.adapter = mCategoryAdaptor
 
-        val arrayAdapter = ArrayAdapter<String>(requireContext(), R.layout.support_simple_spinner_dropdown_item)
-        arrayAdapter.addAll(mViewModel.currentCategories)
-        mBinding.spinner.adapter = arrayAdapter
 
+        return mBinding.root
+    }
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         // コマンド処理
         mBinding.toHistoryButton.setOnClickListener {
             findNavController().navigate(R.id.action_mainFragment_to_historyFragment)
@@ -57,9 +63,11 @@ class MainFragment : Fragment() {
         }
         mGestureDetector = GestureDetector(context,listener)
         mBinding.dateShowing.setOnTouchListener { v, event ->
-           mGestureDetector.onTouchEvent(event)
+            mGestureDetector.onTouchEvent(event)
             true
         }
+
+
 
         //　データ更新時のUI更新設定
         mViewModel.currentPage.observe(this.viewLifecycleOwner){
@@ -67,15 +75,17 @@ class MainFragment : Fragment() {
             mAdaptor.dateStrChange(mViewModel.dateEnList[it])
         }
         mViewModel.allItemList.observe(viewLifecycleOwner){
-            val selectedCategory = mBinding.spinner.selectedItem as String
-            val list= if(selectedCategory.isBlank()) { it } else {
-                it.filter { itemEntity ->  itemEntity.category == selectedCategory }
-            }
-            mAdaptor.submitList(list)
+            mAdaptor.submitList(it)
         }
-        return mBinding.root
-    }
+        mViewModel.currentCategory.observe(viewLifecycleOwner){
+            val list = mViewModel.allItemList.safetyGetList()
+            val filtered = list.filter { itemEntity -> itemEntity.category == it}
+            mAdaptor.submitList(filtered)
+        }
 
+
+        super.onViewCreated(view, savedInstanceState)
+    }
     override fun onPause() {
         val list = mAdaptor.currentList
         mViewModel.saveListToRoom(list)

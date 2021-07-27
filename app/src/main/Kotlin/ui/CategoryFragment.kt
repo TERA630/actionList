@@ -10,7 +10,6 @@ import androidx.navigation.fragment.findNavController
 import io.terameteo.actionlist.MainViewModel
 import io.terameteo.actionlist.R
 import io.terameteo.actionlist.databinding.FragmentCategoryBinding
-import io.terameteo.actionlist.safetyGetList
 import io.terameteo.actionlist.ui.CategoryListAdaptor
 
 // Fragmentではon ViewCreatedでViewのBindをするように推奨されているが､
@@ -24,7 +23,6 @@ class CategoryFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle? ): View {
         mBinding = FragmentCategoryBinding.inflate(inflater, container, false)
-        val categoryFromItems = mViewModel.makeCategoryFromList(mViewModel.allItemList.safetyGetList())
         mBinding.categoryList.adapter =CategoryListAdaptor(mViewModel)
         mBinding.backToMain.setOnClickListener {
             findNavController().navigate(R.id.action_categoryFragment_to_mainFragment)

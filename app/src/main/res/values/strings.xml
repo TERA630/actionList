@@ -49,4 +49,5 @@
     </string-array>
     <!-- contents  -->
     <string name="pushToHistory">History Fragmentへ移動</string>
+    <string name="pushToMain">Main Fragmentへ移動</string>
 </resources>

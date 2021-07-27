@@ -5,8 +5,9 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import io.terameteo.actionlist.MainViewModel
 import io.terameteo.actionlist.databinding.ItemCategoryBinding
+import io.terameteo.actionlist.safetyGet
 
-class CategoryListAdaptor(val mViewModel: MainViewModel)
+class CategoryListAdaptor(private val mViewModel: MainViewModel)
     :RecyclerView.Adapter<RecyclerView.ViewHolder>(){
     class ItemViewHolder(private val mBinding:ItemCategoryBinding)
         :RecyclerView.ViewHolder(mBinding.root){
@@ -15,7 +16,7 @@ class CategoryListAdaptor(val mViewModel: MainViewModel)
         }
     }
     override fun getItemCount(): Int {
-        return mViewModel.currentCategories.size
+        return mViewModel.usedCategories.value?.size ?: 0
     }
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         val layoutInflater = LayoutInflater.from(parent.context)
@@ -23,6 +24,6 @@ class CategoryListAdaptor(val mViewModel: MainViewModel)
         return ItemViewHolder(binding)
     }
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
-        (holder as ItemViewHolder).bind(mViewModel.currentCategories[position])
+        (holder as ItemViewHolder).bind(mViewModel.usedCategories.safetyGet(position))
     }
 }
