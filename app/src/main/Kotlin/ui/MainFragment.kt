@@ -67,8 +67,6 @@ class MainFragment : Fragment() {
             true
         }
 
-
-
         //　データ更新時のUI更新設定
         mViewModel.currentPage.observe(this.viewLifecycleOwner){
             mBinding.dateShowing.text = mViewModel.dateJpList[it]
@@ -82,8 +80,6 @@ class MainFragment : Fragment() {
             val filtered = list.filter { itemEntity -> itemEntity.category == it}
             mAdaptor.submitList(filtered)
         }
-
-
         super.onViewCreated(view, savedInstanceState)
     }
     override fun onPause() {

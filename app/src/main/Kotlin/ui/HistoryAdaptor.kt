@@ -57,8 +57,8 @@ class HistoryAdaptor(private val mViewModel: MainViewModel)
     }
 }
 
-//                                column          row
+//                                column          column
 // GridLayout VERTICAL(Span3)    0 1 2   HORIZON 0  3  6
-//                               3 4 5    column 1  4  7
+//                               3 4 5    row    1  4  7
 //                               6 7 8           2  5  8
 //  除算　/　　%

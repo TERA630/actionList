@@ -1,6 +1,7 @@
 package io.terameteo.actionlist.ui
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -8,10 +9,10 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
+import io.terameteo.actionlist.MAIN_WINDOW
 import io.terameteo.actionlist.MainViewModel
 import io.terameteo.actionlist.R
 import io.terameteo.actionlist.databinding.FragmentHistoryBinding
-import io.terameteo.actionlist.safetyGetList
 
 class HistoryFragment:Fragment() {
     private val mViewModel: MainViewModel by activityViewModels()
@@ -39,11 +40,13 @@ class HistoryFragment:Fragment() {
         mViewModel.allItemList.observe(viewLifecycleOwner){
             mAdaptor.submitList(it)
         }
-        mViewModel.currentCategory.observe(viewLifecycleOwner){
-            val list = mViewModel.allItemList.safetyGetList()
-            val filtered = list.filter { itemEntity -> itemEntity.category == it}
-            mAdaptor.submitList(filtered)
-        }
 
+
+    }
+    override fun onPause() {
+        val list = mAdaptor.currentList
+        mViewModel.saveListToRoom(list)
+        Log.i(MAIN_WINDOW,"historyadaptor was paused.")
+        super.onPause()
     }
 }
