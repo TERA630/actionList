@@ -25,6 +25,7 @@ class MainViewModel : ViewModel() {
     val currentCategory = MutableLiveData("")
     val usedCategories= MediatorLiveData<List<String>>()
 
+
     fun initialize(_context:Context) {
         myModel.initializeDB(_context)
         for (i in 0..9) {
@@ -43,9 +44,9 @@ class MainViewModel : ViewModel() {
                 allItemList = myModel.dao.getAll()
         }
         usedCategories.addSource(allItemList){
-                value -> val list = myModel.makeCategoryList(value)
+                it?.let {val list = myModel.makeCategoryList(it)
                 usedCategories.postValue(list)
-
+                }
         }
     }
     fun stateSave(_context: Context) {
