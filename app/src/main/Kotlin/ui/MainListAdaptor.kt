@@ -22,8 +22,7 @@ class MainListAdaptor(private val viewModel: MainViewModel,private var dateStr:S
         return ViewHolderOfCell(ItemTestBinding.inflate(layoutInflater, parent, false))
     }
     class ViewHolderOfCell( val binding: ItemTestBinding) :
-        RecyclerView.ViewHolder(binding.root) {
-        }
+        RecyclerView.ViewHolder(binding.root)
 
     // Viewへの参照を保持｡ViewBindingが使用可能となったので､個々の要素でなく､Bindingのみ保持するようになった｡
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
@@ -56,11 +55,11 @@ object DiffCallback : DiffUtil.ItemCallback<ItemEntity>() {
         return old.id == new.id
     }
     override fun areContentsTheSame(
-        old: ItemEntity, new: ItemEntity): Boolean {
-        val seemsToSame = (old.title == new.title)
-                &&(old.history == new.history )
-                &&(old.category ==  new.category )
-         return seemsToSame
+        old: ItemEntity, new: ItemEntity
+    ): Boolean {
+        return ((old.title == new.title)
+                && (old.history == new.history)
+                && (old.category == new.category))
     }
 
 }

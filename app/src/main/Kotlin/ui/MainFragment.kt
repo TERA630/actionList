@@ -36,13 +36,12 @@ class MainFragment : Fragment() {
         mBinding.firstPageList.layoutManager = flexBoxLayoutManager
         mAdaptor = MainListAdaptor(
             viewModel = mViewModel,
-            mViewModel.dateEnList[mViewModel.currentPage.valueOrZero()]
+            mViewModel.getDateStr(mViewModel.currentPage.valueOrZero(), DATE_EN)
         )
         mBinding.firstPageList.adapter = mAdaptor
         mCategoryAdaptor = CategoryListAdaptor(mViewModel)
         mBinding.categoryList.layoutManager = LinearLayoutManager(this.requireContext(),RecyclerView.HORIZONTAL,false)
         mBinding.categoryList.adapter = mCategoryAdaptor
-
 
         return mBinding.root
     }
@@ -66,30 +65,19 @@ class MainFragment : Fragment() {
             mGestureDetector.onTouchEvent(event)
             true
         }
-
-
-
         //　データ更新時のUI更新設定
         mViewModel.currentPage.observe(this.viewLifecycleOwner){
-            mBinding.dateShowing.text = mViewModel.dateJpList[it]
-            mAdaptor.dateStrChange(mViewModel.dateEnList[it])
+            mBinding.dateShowing.text = mViewModel.getDateStr(it, DATE_JP)
+            mAdaptor.dateStrChange(mViewModel.getDateStr(it, DATE_EN))
         }
         mViewModel.allItemList.observe(viewLifecycleOwner){
             mAdaptor.submitList(it)
         }
-        mViewModel.currentCategory.observe(viewLifecycleOwner){
-            val list = mViewModel.allItemList.safetyGetList()
-            val filtered = list.filter { itemEntity -> itemEntity.category == it}
-            mAdaptor.submitList(filtered)
-        }
-
-
         super.onViewCreated(view, savedInstanceState)
     }
     override fun onPause() {
         val list = mAdaptor.currentList
         mViewModel.saveListToRoom(list)
-        Log.i(MAIN_WINDOW,"mainFragment was paused.")
         super.onPause()
     }
     private fun swipeLeft(){

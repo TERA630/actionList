@@ -11,7 +11,6 @@ import androidx.recyclerview.widget.GridLayoutManager
 import io.terameteo.actionlist.MainViewModel
 import io.terameteo.actionlist.R
 import io.terameteo.actionlist.databinding.FragmentHistoryBinding
-import io.terameteo.actionlist.safetyGetList
 
 class HistoryFragment:Fragment() {
     private val mViewModel: MainViewModel by activityViewModels()
@@ -21,7 +20,6 @@ class HistoryFragment:Fragment() {
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         // bind view
-
         mBinding = FragmentHistoryBinding.inflate(inflater, container, false)
         mBinding.historyGrid.layoutManager = GridLayoutManager(mBinding.root.context,5,GridLayoutManager.HORIZONTAL,false)
         mAdaptor = HistoryAdaptor(mViewModel)
@@ -29,20 +27,14 @@ class HistoryFragment:Fragment() {
 
         return mBinding.root
     }
-
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         // コマンド処理
         mBinding.toMainButton.setOnClickListener {
-            findNavController( ).navigate(R.id.action_categoryFragment_to_mainFragment)
+            findNavController( ).navigate(R.id.action_historyFragment_to_mainFragment)
         }
         mViewModel.allItemList.observe(viewLifecycleOwner){
             mAdaptor.submitList(it)
-        }
-        mViewModel.currentCategory.observe(viewLifecycleOwner){
-            val list = mViewModel.allItemList.safetyGetList()
-            val filtered = list.filter { itemEntity -> itemEntity.category == it}
-            mAdaptor.submitList(filtered)
         }
 
     }

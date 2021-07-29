@@ -22,7 +22,7 @@ const val MY_MODEL="myModel"
 const val DEFAULT_REWARD = 30
 
 class MyModel {
-    lateinit var db: ItemCollectionDB
+    private lateinit var db: ItemCollectionDB
     lateinit var dao: ItemCollectionDAO
 
     fun initializeDB( _context: Context) {

@@ -9,11 +9,13 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 
 const val  VIEW_MODEL = "mainViewModel"
+const val DATE_JP = 1
+const val DATE_EN = 2
+const val DATE_SHORT = 3
+
 
 class MainViewModel : ViewModel() {
     private val myModel by lazy { MyModel() }
-    val dateJpList = MutableList(10){"1970年1月1日(木)"}
-    val dateEnList = MutableList(10){"1970/1/1"}
     val dateShortList = MutableList(7){"1/1"}
 
     private val  viewModelIOScope =  CoroutineScope(Job() + viewModelScope.coroutineContext + Dispatchers.IO)
@@ -28,24 +30,14 @@ class MainViewModel : ViewModel() {
 
     fun initialize(_context:Context) {
         myModel.initializeDB(_context)
-        for (i in 0..9) {
-            dateEnList[i] = myModel.getDayStringEn(9 - i)
-        }
-        for (i in 0..9) {
-            dateJpList[i] = myModel.getDayStringJp(9 - i)
-        }
-        for (i in 0..6){
-            dateShortList[i] = myModel.getDayStringShort(6 - i)
-        }
         currentReward.postValue(myModel.loadRewardFromPreference(_context))
         currentRewardStr.addSource(currentReward) { value -> currentRewardStr.postValue("$value　円") }
         currentCategory.postValue(myModel.loadCategoryFromPreference(_context))
         viewModelIOScope.launch {
                 allItemList = myModel.dao.getAll()
-        }
-        usedCategories.addSource(allItemList){
-                it?.let {val list = myModel.makeCategoryList(it)
-                usedCategories.postValue(list)
+                usedCategories.addSource(allItemList){
+                val list = myModel.makeCategoryList(it)
+                    usedCategories.postValue(list)
                 }
         }
     }
@@ -90,7 +82,17 @@ class MainViewModel : ViewModel() {
                 myModel.insertItem(item)
             }
         }
-
+    }
+    fun getDateStr(backDate: Int, mode: Int): String {
+        return when (mode) {
+            DATE_EN -> myModel.getDayStringEn(backDate)
+            DATE_JP -> myModel.getDayStringJp(backDate)
+            DATE_SHORT -> myModel.getDayStringShort(backDate)
+            else -> {
+                Log.w(VIEW_MODEL, "invaild param was found getDateStr")
+                ""
+            }
+        }
     }
 }
 // LiveDataの拡張関数 Static method

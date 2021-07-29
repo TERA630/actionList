@@ -12,9 +12,12 @@ import io.terameteo.actionlist.databinding.GridPlainBinding
 import io.terameteo.actionlist.model.ItemEntity
 import io.terameteo.actionlist.model.isDoneAt
 
+const val  NUMBER_OF_ITEMS  = 5
+const val  NUMBER_OF_DAY = 7
+
 class HistoryAdaptor(private val mViewModel: MainViewModel)
     : ListAdapter<ItemEntity, RecyclerView.ViewHolder>(DiffCallback){
-    override fun getItemCount(): Int = 40
+    override fun getItemCount(): Int = (NUMBER_OF_ITEMS * NUMBER_OF_DAY+1)
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         val layoutInflater = LayoutInflater.from(parent.context)
         val binding = GridPlainBinding.inflate(layoutInflater, parent, false)
@@ -22,8 +25,8 @@ class HistoryAdaptor(private val mViewModel: MainViewModel)
     }
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
         val gridView = holder.itemView as TextView
-        val row = position % 5
-        val column = position /5
+        val row = position % NUMBER_OF_ITEMS
+        val column = position / NUMBER_OF_ITEMS
         when (row){
             0 -> {
                 gridView.setBackgroundColor(ResourcesCompat.getColor(gridView.resources,
@@ -37,8 +40,8 @@ class HistoryAdaptor(private val mViewModel: MainViewModel)
             }
         }
     }
-    class GridViewHolder( binding: GridPlainBinding) :RecyclerView.ViewHolder(binding.root){
-    }
+    class GridViewHolder( binding: GridPlainBinding) :RecyclerView.ViewHolder(binding.root)
+
     private fun bindHeaderDate(column:Int,view: TextView){
         if (column >= 1 ) view.text = mViewModel.dateShortList[column - 1]  // × =>
     }
@@ -52,7 +55,7 @@ class HistoryAdaptor(private val mViewModel: MainViewModel)
         view.text = if (item.isDoneAt(dateStr)) {  view.resources.getString(R.string.done)} else { view.resources.getString(R.string.undone)}
         view.setOnClickListener {
             mViewModel.flipItemHistory(item,dateStr)
-            notifyItemChanged(row + column * 5)
+            notifyItemChanged(row + column * NUMBER_OF_ITEMS)
         }
     }
 }

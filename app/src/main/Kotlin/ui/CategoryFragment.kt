@@ -29,12 +29,4 @@ class CategoryFragment : Fragment() {
         }
         return mBinding.root
     }
-
-    override fun onPause() {
-
-        super.onPause()
-    }
-
-
-
 }

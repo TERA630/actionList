@@ -12,9 +12,8 @@
         android:id="@+id/toMainButton"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:srcCompat="@drawable/ic_daily" />
-
-
+        app:srcCompat="@drawable/ic_daily"
+        android:contentDescription="@string/pushToMain"/>
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/historyGrid"
     android:layout_width="wrap_content"

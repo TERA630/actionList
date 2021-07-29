@@ -10,9 +10,6 @@ import com.google.android.material.snackbar.Snackbar
 import io.terameteo.actionlist.databinding.ActivityScrollingBinding
 
 const val MAIN_WINDOW = "mainWindow"
-const val DETAIL_WINDOW = "detailWindow"
-const val HISTORY_WINDOW = "historyWindow"
-const val CATEGORY_WINDOW = "categoryWindow"
 
 class ScrollingActivity : AppCompatActivity() {
     private val mViewModel: MainViewModel by viewModels() // activity-ktx

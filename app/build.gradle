@@ -46,7 +46,6 @@ dependencies {
     def coroutine_version = '1.5.1-native-mt'
     def lifecycle_version = "2.3.1"
     def nav_version = "2.3.5"
-    def testCore_version = "1.4.0-rc01"
     def junitVersion = "1.1.3"
     def espressoVersion = "3.4.0"
     def room_version = "2.3.0"
@@ -59,7 +58,7 @@ dependencies {
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:$coroutine_version"
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:$coroutine_version"
     // UI controller
-    implementation 'androidx.activity:activity-ktx:1.2.4'
+    implementation 'androidx.activity:activity-ktx:1.3.0'
     implementation 'androidx.fragment:fragment-ktx:1.3.6'
     // UI
     implementation 'com.google.android.flexbox:flexbox:3.0.0'
