@@ -40,7 +40,7 @@ class HistoryFragment:Fragment() {
         }
         mBinding.toRecent.setOnClickListener{
             val page = mViewModel.currentPage.valueOrZero()
-            if(page>=7) mViewModel.currentPage.postValue(page - 7)
+            if( page>=7 ) mViewModel.currentPage.postValue(page - 7)
             else if(page<7) mViewModel.currentPage.postValue(0)
         }
         // データ更新時の挙動
@@ -48,7 +48,7 @@ class HistoryFragment:Fragment() {
             mAdaptor.submitList(it)
         }
         mViewModel.currentPage.observe(viewLifecycleOwner){
-            mAdaptor.notifyDataSetChanged()
+            mAdaptor.notifyItemRangeChanged(1, (NUMBER_OF_DAY+1) * NUMBER_OF_ITEMS )
         }
     }
     override fun onPause() {
