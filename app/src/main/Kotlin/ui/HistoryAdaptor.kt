@@ -12,6 +12,7 @@ import io.terameteo.actionlist.R
 import io.terameteo.actionlist.databinding.GridPlainBinding
 import io.terameteo.actionlist.model.ItemEntity
 import io.terameteo.actionlist.model.isDoneAt
+import io.terameteo.actionlist.valueOrZero
 
 const val  NUMBER_OF_ITEMS  = 5
 const val  NUMBER_OF_DAY = 7
@@ -44,7 +45,8 @@ class HistoryAdaptor(private val mViewModel: MainViewModel)
     class GridViewHolder( binding: GridPlainBinding) :RecyclerView.ViewHolder(binding.root)
 
     private fun bindHeaderDate(column:Int,view: TextView){
-        if (column >= 1 ) view.text = mViewModel.getDateStr(7 - column, DATE_SHORT)  // × =>
+        if (column >= 1 ) view.text = mViewModel.getDateStr(mViewModel.currentPage.valueOrZero() + 7 - column,
+            DATE_SHORT)  //  (row, column) = (0,0)は何も描画しない｡ (0, 7)は currentPage:0 本日の日付, (0,1)はcurrentPage +6 6日前
     }
     private fun bindItemTitle(row:Int, view: TextView){
         val item = getItem(row)
@@ -52,7 +54,7 @@ class HistoryAdaptor(private val mViewModel: MainViewModel)
     }
     private fun bindItemLog(row:Int, column: Int,view: TextView){
         val item = getItem(row)
-        val dateStr = "2021/" + mViewModel.getDateStr(7 - column, DATE_SHORT)
+        val dateStr = "2021/" + mViewModel.getDateStr(mViewModel.currentPage.valueOrZero() + 7 - column, DATE_SHORT)
         view.text = if (item.isDoneAt(dateStr)) {  view.resources.getString(R.string.done)} else { view.resources.getString(R.string.undone)}
         view.setOnClickListener {
             mViewModel.flipItemHistory(item,dateStr)

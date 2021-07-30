@@ -34,8 +34,7 @@
         android:contentDescription="@string/move_date"
         app:layout_constraintBottom_toTopOf="@id/historyGrid"
         app:layout_constraintEnd_toEndOf="parent"
-        app:srcCompat="@android:drawable/ic_media_play"
-        tools:srcCompat="@android:drawable/ic_media_play" />
+        app:srcCompat="@android:drawable/ic_media_play" />
 
 
     <androidx.recyclerview.widget.RecyclerView
