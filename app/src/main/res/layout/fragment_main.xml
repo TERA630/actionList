@@ -47,10 +47,10 @@
         android:id="@+id/categoryList"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/toHistoryButton"
         tools:itemCount="8"
+        tools:orientation="horizontal"
         tools:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
         tools:layout_height="72dp"
         tools:listitem="@layout/item_test" />

@@ -8,37 +8,30 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 
-const val  VIEW_MODEL = "mainViewModel"
+const val VIEW_MODEL = "mainViewModel"
 const val DATE_JP = 1
 const val DATE_EN = 2
 const val DATE_SHORT = 3
 
-
-class MainViewModel : ViewModel() {
-    private val myModel by lazy { MyModel() }
-    val dateShortList = MutableList(7){"1/1"}
-
+class MainViewModel(private val myModel:MyModel) : ViewModel() {
     private val  viewModelIOScope =  CoroutineScope(Job() + viewModelScope.coroutineContext + Dispatchers.IO)
     // LiveData
-    lateinit var allItemList:LiveData<List<ItemEntity>>
+    val allItemList:LiveData<List<ItemEntity>> =  myModel.dao.getAll()
     private val currentReward:MutableLiveData<Int> = MutableLiveData(0)
     val currentRewardStr = MediatorLiveData<String>()
     val currentPage = MutableLiveData(0)
     val currentCategory = MutableLiveData("")
     val usedCategories= MediatorLiveData<List<String>>()
 
-
     fun initialize(_context:Context) {
-        myModel.initializeDB(_context)
         currentReward.postValue(myModel.loadRewardFromPreference(_context))
         currentRewardStr.addSource(currentReward) { value -> currentRewardStr.postValue("$value　円") }
         currentCategory.postValue(myModel.loadCategoryFromPreference(_context))
-        viewModelIOScope.launch {
-                allItemList = myModel.dao.getAll()
-                usedCategories.addSource(allItemList){
-                val list = myModel.makeCategoryList(it)
-                    usedCategories.postValue(list)
-                }
+
+        usedCategories.addSource(allItemList){
+            val list = myModel.makeCategoryList(it)
+            Log.i(VIEW_MODEL,"categories are $list")
+            usedCategories.postValue(list)
         }
     }
     fun stateSave(_context: Context) {
@@ -89,9 +82,15 @@ class MainViewModel : ViewModel() {
             DATE_JP -> myModel.getDayStringJp(backDate)
             DATE_SHORT -> myModel.getDayStringShort(backDate)
             else -> {
-                Log.w(VIEW_MODEL, "invaild param was found getDateStr")
+                Log.w(VIEW_MODEL, "wrong param was found getDateStr")
                 ""
             }
+        }
+    }
+    class Factory(private val model:MyModel):ViewModelProvider.NewInstanceFactory(){
+        @Suppress("unchecked_cast")
+        override fun <T : ViewModel?> create(modelClass: Class<T>): T {
+            return MainViewModel(model) as T
         }
     }
 }
@@ -134,10 +133,9 @@ fun MediatorLiveData<List<String>>.safetyGet(position: Int):String{
     } else {
         category[position]
     }
-
-
-
 }
+
+
 
 //  ViewModel: Activity再生成や回転で破棄されない独自の長いLifecycleで管理されるClass(ViewModelLifeCycle)
 //  retainInstance = trueなHolderFragmentにキャッシュされているらしい｡

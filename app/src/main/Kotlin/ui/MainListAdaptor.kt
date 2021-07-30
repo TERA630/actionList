@@ -14,8 +14,9 @@ import io.terameteo.actionlist.model.isDoneAt
 
 // VMと dateStr YYYY/m/d を渡されると list の historyに含まれているかをみて､BackGroundを切りかえて表示する｡
 
-class MainListAdaptor(private val viewModel: MainViewModel,private var dateStr:String)
-        : ListAdapter<ItemEntity, RecyclerView.ViewHolder>(DiffCallback) {
+class MainListAdaptor(
+    private val viewModel: MainViewModel,
+    private var dateStr:String ) : ListAdapter<ItemEntity, RecyclerView.ViewHolder>(DiffCallback) {
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolderOfCell {
         // リストの表示要求があったとき､viewTypeに応じて必要なViewHolderを確保する｡
         val layoutInflater = LayoutInflater.from(parent.context)
@@ -43,7 +44,7 @@ class MainListAdaptor(private val viewModel: MainViewModel,private var dateStr:S
             notifyItemChanged(position)
         }
     }
-    fun dateStrChange(_dateStr: String){
+    fun dateChange(_dateStr: String){
         dateStr = _dateStr
         notifyDataSetChanged()
     }

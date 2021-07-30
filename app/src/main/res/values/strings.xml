@@ -19,6 +19,7 @@
     <string name="undone">×</string>
     <string name="make_list_fromResource">サンプルのリストを作成する</string>
     <string name="edit_category_list">カテゴリーを編集する</string>
+    <string name="move_date">日付の移動をします</string>
 
     <string name="titleCaption">行うことのタイトル</string>
     <string name="rewardCaption">達成時の報酬</string>

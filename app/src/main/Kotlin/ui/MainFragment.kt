@@ -2,7 +2,6 @@ package io.terameteo.actionlist.ui
 
 import android.annotation.SuppressLint
 import android.os.Bundle
-import android.util.Log
 import android.view.*
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
@@ -40,8 +39,9 @@ class MainFragment : Fragment() {
         )
         mBinding.firstPageList.adapter = mAdaptor
         mCategoryAdaptor = CategoryListAdaptor(mViewModel)
-        mBinding.categoryList.layoutManager = LinearLayoutManager(this.requireContext(),RecyclerView.HORIZONTAL,false)
         mBinding.categoryList.adapter = mCategoryAdaptor
+        mBinding.categoryList.layoutManager = LinearLayoutManager(this.requireContext(),RecyclerView.HORIZONTAL,false)
+
 
         return mBinding.root
     }
@@ -54,7 +54,6 @@ class MainFragment : Fragment() {
             override fun onFling(e1: MotionEvent, e2: MotionEvent, velocityX: Float, velocityY: Float): Boolean {
                 val moveX = (e2.x - e1.x).toInt()
                 val moveY = (e2.y - e1.y).toInt()
-                Log.i(MAIN_WINDOW,"vector $moveX , $moveY, velocity is  $velocityX, $velocityY")
                 if(moveX >= 100) swipeRight()
                 if(moveX <= -100) swipeLeft()
                 return super.onFling(e1, e2, velocityX, velocityY)
@@ -68,7 +67,7 @@ class MainFragment : Fragment() {
         //　データ更新時のUI更新設定
         mViewModel.currentPage.observe(this.viewLifecycleOwner){
             mBinding.dateShowing.text = mViewModel.getDateStr(it, DATE_JP)
-            mAdaptor.dateStrChange(mViewModel.getDateStr(it, DATE_EN))
+            mAdaptor.dateChange(mViewModel.getDateStr(it, DATE_EN))
         }
         mViewModel.allItemList.observe(viewLifecycleOwner){
             mAdaptor.submitList(it)
@@ -82,7 +81,7 @@ class MainFragment : Fragment() {
     }
     private fun swipeLeft(){
         val page = mViewModel.currentPage.valueOrZero()
-        if (page < 9) mViewModel.currentPage.postValue(page+1)
+        if (page < 90) mViewModel.currentPage.postValue(page+1)
     }
     private fun swipeRight(){
         val page = mViewModel.currentPage.valueOrZero()

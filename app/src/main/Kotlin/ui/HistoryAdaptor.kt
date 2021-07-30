@@ -6,6 +6,7 @@ import android.widget.TextView
 import androidx.core.content.res.ResourcesCompat
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
+import io.terameteo.actionlist.DATE_SHORT
 import io.terameteo.actionlist.MainViewModel
 import io.terameteo.actionlist.R
 import io.terameteo.actionlist.databinding.GridPlainBinding
@@ -17,7 +18,7 @@ const val  NUMBER_OF_DAY = 7
 
 class HistoryAdaptor(private val mViewModel: MainViewModel)
     : ListAdapter<ItemEntity, RecyclerView.ViewHolder>(DiffCallback){
-    override fun getItemCount(): Int = (NUMBER_OF_ITEMS * NUMBER_OF_DAY+1)
+    override fun getItemCount(): Int = NUMBER_OF_ITEMS * (NUMBER_OF_DAY+1)
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         val layoutInflater = LayoutInflater.from(parent.context)
         val binding = GridPlainBinding.inflate(layoutInflater, parent, false)
@@ -33,7 +34,7 @@ class HistoryAdaptor(private val mViewModel: MainViewModel)
                     R.color.colorForestGreen,null))
                 bindHeaderDate(column,gridView)
             }
-            in 1..5 -> {
+            in 1..NUMBER_OF_ITEMS -> {
                 gridView.setBackgroundColor(ResourcesCompat.getColor(gridView.resources,
                     R.color.white,null))
                 if(column == 0) bindItemTitle(row,gridView) else bindItemLog(row,column,gridView)
@@ -43,7 +44,7 @@ class HistoryAdaptor(private val mViewModel: MainViewModel)
     class GridViewHolder( binding: GridPlainBinding) :RecyclerView.ViewHolder(binding.root)
 
     private fun bindHeaderDate(column:Int,view: TextView){
-        if (column >= 1 ) view.text = mViewModel.dateShortList[column - 1]  // × =>
+        if (column >= 1 ) view.text = mViewModel.getDateStr(7 - column, DATE_SHORT)  // × =>
     }
     private fun bindItemTitle(row:Int, view: TextView){
         val item = getItem(row)
@@ -51,7 +52,7 @@ class HistoryAdaptor(private val mViewModel: MainViewModel)
     }
     private fun bindItemLog(row:Int, column: Int,view: TextView){
         val item = getItem(row)
-        val dateStr = "2021/" + mViewModel.dateShortList[column-1]
+        val dateStr = "2021/" + mViewModel.getDateStr(7 - column, DATE_SHORT)
         view.text = if (item.isDoneAt(dateStr)) {  view.resources.getString(R.string.done)} else { view.resources.getString(R.string.undone)}
         view.setOnClickListener {
             mViewModel.flipItemHistory(item,dateStr)

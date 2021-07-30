@@ -3,22 +3,28 @@ package io.terameteo.actionlist
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
-import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.findNavController
 import com.google.android.material.snackbar.Snackbar
 import io.terameteo.actionlist.databinding.ActivityScrollingBinding
+import io.terameteo.actionlist.model.MyModel
 
 const val MAIN_WINDOW = "mainWindow"
 
 class ScrollingActivity : AppCompatActivity() {
-    private val mViewModel: MainViewModel by viewModels() // activity-ktx
+    private val  mViewModel: MainViewModel by lazy {
+        val myModel = MyModel()
+        myModel.initializeDB(this)
+        val factory =  MainViewModel.Factory(myModel)
+        ViewModelProvider(this,factory)[MainViewModel::class.java]
+        }
     private lateinit var mBinding: ActivityScrollingBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         mViewModel.initialize(this)
-        mViewModel.currentPage.postValue(9)
+        mViewModel.currentPage.postValue(0)
         mBinding = ActivityScrollingBinding.inflate(layoutInflater)
         setContentView(mBinding.root)
         setSupportActionBar(findViewById(R.id.toolbar))
@@ -29,7 +35,6 @@ class ScrollingActivity : AppCompatActivity() {
             Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
                 .setAction("Action", null).show()
         }
-      // wakeMainFragment()
         //　データ更新時の処理
         mViewModel.currentRewardStr.observe(this){
             mBinding.rewardText.text = it
