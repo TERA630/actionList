@@ -54,8 +54,8 @@ class MainFragment : Fragment() {
             override fun onFling(e1: MotionEvent, e2: MotionEvent, velocityX: Float, velocityY: Float): Boolean {
                 val moveX = (e2.x - e1.x).toInt()
                 val moveY = (e2.y - e1.y).toInt()
-                if(moveX >= 100) swipeRight()
-                if(moveX <= -100) swipeLeft()
+                if(moveX >= 50) swipeRight()
+                if(moveX <= -50) swipeLeft()
                 return super.onFling(e1, e2, velocityX, velocityY)
             }
         }
@@ -75,8 +75,7 @@ class MainFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
     }
     override fun onPause() {
-        val list = mAdaptor.currentList
-        mViewModel.saveListToRoom(list)
+        mViewModel.saveListToRoom(mAdaptor.currentList)
         super.onPause()
     }
     private fun swipeLeft(){

@@ -13,6 +13,7 @@ import io.terameteo.actionlist.model.MyModel
 const val MAIN_WINDOW = "mainWindow"
 
 class ScrollingActivity : AppCompatActivity() {
+
     private val  mViewModel: MainViewModel by lazy {
         val myModel = MyModel()
         myModel.initializeDB(this)
