@@ -51,4 +51,6 @@
     <!-- contents  -->
     <string name="pushToHistory">History Fragmentへ移動</string>
     <string name="pushToMain">Main Fragmentへ移動</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>

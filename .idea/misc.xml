@@ -3,8 +3,14 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
-        <entry key="..\:/Users/YOSHI/AndroidStudioProjects/actionlist/app/src/main/res/layout/fragment_history.xml" value="0.4005208333333333" />
+        <entry key="..\:/Users/Yoshihiko/AndroidStudioProjects/actionList/app/src/main/res/drawable/square_gold_gradient.xml" value="0.1" />
+        <entry key="..\:/Users/Yoshihiko/AndroidStudioProjects/actionList/app/src/main/res/drawable/square_green_gradient.xml" value="0.1" />
+        <entry key="..\:/Users/Yoshihiko/AndroidStudioProjects/actionList/app/src/main/res/drawable/square_round_white.xml" value="0.6518518518518519" />
+        <entry key="..\:/Users/Yoshihiko/AndroidStudioProjects/actionList/app/src/main/res/layout/fragment_detail.xml" value="0.18425925925925926" />
         <entry key="..\:/Users/Yoshihiko/AndroidStudioProjects/actionList/app/src/main/res/layout/fragment_history.xml" value="0.2016210739614995" />
+        <entry key="..\:/Users/Yoshihiko/AndroidStudioProjects/actionList/app/src/main/res/layout/fragment_main.xml" value="0.3302938196555218" />
+        <entry key="..\:/Users/Yoshihiko/AndroidStudioProjects/actionList/app/src/main/res/layout/grid_plain.xml" value="0.18425925925925926" />
+        <entry key="..\:/Users/Yoshihiko/AndroidStudioProjects/actionList/app/src/main/res/mipmap-anydpi-v26/ic_launcher_round.xml" value="0.1" />
       </map>
     </option>
   </component>

@@ -143,7 +143,7 @@ fun MediatorLiveData<List<String>>.safetyGet(position: Int):String{
 //  負わせるべき役割
 //  Model-> ViewModel　ModelからUIの描画(Binding)に必要な情報に変換しLivedataで保持する｡
 //  ActivityやFragmentはLiveDataをObserveして変更があればUI反映 or DataBinding使用｡
-//  VMはViewへの参照は持つべきでない｡ ActivityContext の参照を保持するべきでない｡
+//  VMはView､ActivityContext の参照を保持するべきでない｡
 //  ユーザーのViewへのActionを受け取り､Modelに通知する｡　Commands
 //  ViewがModelのメンバを直接操作するのは推奨されない｡
 

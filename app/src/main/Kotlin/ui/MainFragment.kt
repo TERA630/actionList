@@ -56,8 +56,6 @@ class MainFragment : Fragment() {
                 val moveY = (e2.y - e1.y).toInt()
                 if(moveX >= 50) swipeRight()
                 if(moveX <= -50) swipeLeft()
-                if(moveX >= 80) swipeRight()
-                if(moveX <= -80) swipeLeft()
                 return super.onFling(e1, e2, velocityX, velocityY)
             }
         }
@@ -73,6 +71,9 @@ class MainFragment : Fragment() {
         }
         mViewModel.allItemList.observe(viewLifecycleOwner){
             mAdaptor.submitList(it)
+        }
+        mViewModel.usedCategories.observe(viewLifecycleOwner){
+            mCategoryAdaptor.notifyDataSetChanged()
         }
         super.onViewCreated(view, savedInstanceState)
     }

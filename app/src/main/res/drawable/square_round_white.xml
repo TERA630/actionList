@@ -7,5 +7,5 @@
         android:startColor="@color/colorSilver" />
     <stroke
         android:width="@dimen/flex_item_border"
-        android:color="@color/colorSilverEdge" />
+        android:color="@color/darkBrown" />
 </shape>

@@ -24,6 +24,6 @@ class CategoryListAdaptor(private val mViewModel: MainViewModel)
         return ItemViewHolder(binding)
     }
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
-        (holder as ItemViewHolder).bind(mViewModel.usedCategories.safetyGet(position))
+        (holder as ItemViewHolder).bind( mViewModel.usedCategories.safetyGet(position) )
     }
 }

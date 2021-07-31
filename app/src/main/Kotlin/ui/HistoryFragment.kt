@@ -35,14 +35,10 @@ class HistoryFragment:Fragment() {
         mBinding.toMainButton.setOnClickListener {
             findNavController( ).navigate(R.id.action_historyFragment_to_mainFragment)
         }
-        mBinding.toPast.setOnClickListener {
-            val page = mViewModel.currentPage.valueOrZero()
-            if( page< 93 ) mViewModel.currentPage.postValue(page + 7 )
-        }
         // データー更新時
         mBinding.toPast.setOnClickListener{
             val page = mViewModel.currentPage.valueOrZero()
-            if(page<93) mViewModel.currentPage.postValue(page + 7)
+            if(page<83) mViewModel.currentPage.postValue(page + 7)
         }
         mBinding.toRecent.setOnClickListener{
             val page = mViewModel.currentPage.valueOrZero()

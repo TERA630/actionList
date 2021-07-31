@@ -1,13 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
-<TextView
-    android:id="@+id/categoryText"
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
+<TextView    xmlns:android="http://schemas.android.com/apk/res/android"
 
-    android:layout_width="match_parent"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/categoryText"
+    android:layout_width="wrap_content"
     android:layout_height="wrap_content"
     android:padding="@dimen/item_padding"
     android:textColor="@color/darkBrown"
-    android:text="@string/testItem"
+    android:text="@string/testCategory"
     tools:background="@drawable/square_round_white"
-    tools:text="@string/testItem" />
+    tools:text="@string/testCategory" />
