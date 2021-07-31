@@ -3,6 +3,7 @@ package io.terameteo.actionlist.ui
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.core.content.res.ResourcesCompat
+import androidx.navigation.findNavController
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
@@ -42,6 +43,12 @@ class MainListAdaptor(
         thisView.setOnClickListener {
             viewModel.flipItemHistory(item,dateStr)
             notifyItemChanged(position)
+        }
+        holderOfCell.binding.cellText.setOnLongClickListener {
+            view ->
+            val destination = MainFragmentDirections.actionMainFragmentToDetailFragment(getItem(position).id)
+            view.findNavController().navigate(destination)
+            true
         }
     }
     fun dateChange(_dateStr: String){
