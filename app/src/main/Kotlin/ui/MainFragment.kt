@@ -56,6 +56,8 @@ class MainFragment : Fragment() {
                 val moveY = (e2.y - e1.y).toInt()
                 if(moveX >= 50) swipeRight()
                 if(moveX <= -50) swipeLeft()
+                if(moveX >= 80) swipeRight()
+                if(moveX <= -80) swipeLeft()
                 return super.onFling(e1, e2, velocityX, velocityY)
             }
         }

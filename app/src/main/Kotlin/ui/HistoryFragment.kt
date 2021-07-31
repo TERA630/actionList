@@ -40,6 +40,16 @@ class HistoryFragment:Fragment() {
             if( page< 93 ) mViewModel.currentPage.postValue(page + 7 )
         }
         // データー更新時
+        mBinding.toPast.setOnClickListener{
+            val page = mViewModel.currentPage.valueOrZero()
+            if(page<93) mViewModel.currentPage.postValue(page + 7)
+        }
+        mBinding.toRecent.setOnClickListener{
+            val page = mViewModel.currentPage.valueOrZero()
+            if( page>=7 ) mViewModel.currentPage.postValue(page - 7)
+            else if(page<7) mViewModel.currentPage.postValue(0)
+        }
+        // データ更新時の挙動
         mViewModel.allItemList.observe(viewLifecycleOwner){
             mAdaptor.submitList(it)
         }
@@ -47,9 +57,13 @@ class HistoryFragment:Fragment() {
 
         }
 
+        mViewModel.currentPage.observe(viewLifecycleOwner){
+            mAdaptor.notifyItemRangeChanged(1, (NUMBER_OF_DAY+1) * NUMBER_OF_ITEMS )
+        }
     }
     override fun onPause() {
         mViewModel.saveListToRoom( mAdaptor.currentList)
+        mViewModel.saveListToRoom(mAdaptor.currentList)
         super.onPause()
     }
 }
