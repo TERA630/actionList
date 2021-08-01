@@ -52,15 +52,27 @@ class MainViewModel(private val myModel:MyModel) : ViewModel() {
             myModel.appendDateToItem(item,dateStr)
             currentValue + item.reward
         }
+        viewModelIOScope.launch { myModel.dao.update(item) }
         currentReward.postValue(newValue)
     }
 
     fun appendItem(newTitle:String,newReward:Int,category:String){
         if(newTitle.isBlank()) return
-        val newCategory = if(category.isBlank())  "Daily" else category
-        val newItem = ItemEntity(title = newTitle,reward = newReward,category = newCategory)
+        val newCategory = if( category.isBlank())  "Daily" else category
+
+        val currentList = allItemList.safetyGetList()
+        var newId = currentList.size
+        // idが被らない様に処理
+        do {
+             var duplicateItem = currentList.firstOrNull() { itemEntity -> itemEntity.id == newId }
+             newId++
+        } while (duplicateItem != null)
+
+        val newItem = ItemEntity(id = newId, title = newTitle,reward = newReward,category = newCategory)
+
         viewModelIOScope.launch {
-                myModel.insertItem(newItem)
+            myModel.insertItem(newItem)
+            Log.i(VIEW_MODEL,"item $newTitle was appended to List")
         }
     }
     fun saveListToRoom(_list:List<ItemEntity>){

@@ -5,9 +5,8 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
-
     tools:showIn="@layout/activity_scrolling">
-<androidx.fragment.app.FragmentContainerView
+ <androidx.fragment.app.FragmentContainerView
     android:id="@+id/baseFrame"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -15,9 +14,7 @@
     app:navGraph="@navigation/nav_graph"
     app:defaultNavHost="true">
 
-</androidx.fragment.app.FragmentContainerView>
-
-
+ </androidx.fragment.app.FragmentContainerView>
 </androidx.core.widget.NestedScrollView>
 
 <!-- 　Fragment/FrameLayoutよりも､FragmentContainer

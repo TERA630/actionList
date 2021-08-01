@@ -12,11 +12,13 @@ import androidx.navigation.fragment.navArgs
 import io.terameteo.actionlist.MainViewModel
 import io.terameteo.actionlist.R
 import io.terameteo.actionlist.databinding.FragmentDetailBinding
+import io.terameteo.actionlist.model.DEFAULT_CATEGORY
+import io.terameteo.actionlist.model.DEFAULT_REWARD
 import io.terameteo.actionlist.safetyGetList
 
 class DetailFragment : Fragment() {
     private val mViewModel: MainViewModel by activityViewModels()
-    private val args:DetailFragmentArgs by navArgs()
+    private val args:DetailFragmentArgs by navArgs()  // -1 新しいアイテム
     lateinit var mBinding:FragmentDetailBinding
 
     override fun onCreateView(
@@ -30,19 +32,24 @@ class DetailFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         val list = mViewModel.allItemList.safetyGetList()
-        val item = list.find { itemEntity -> itemEntity.id == args.idToEdit  }
-        item?.let {
+        val idSafe = args.idToEdit
+        val item = list.find { itemEntity -> itemEntity.id == idSafe}
+        if(item == null ) {
+            Log.w("detailFragment","item ${args.idToEdit} was not found")
+        } else {
             mBinding.editTitle.setText(item.title)
-        } ?: run {
-            Log.w("detailFragment","item ${args.idToEdit} was not faund")
+            mBinding.editReward.setText(item.reward)
         }
-
 
         mBinding.detailCancelButton.setOnClickListener { v ->
             findNavController().navigate(R.id.action_detailFragment_to_mainFragment)
         }
         mBinding.detailOkButton.setOnClickListener { v ->
+            val newTitle = mBinding.editTitle.text.toString()
+            val rewardStr = mBinding.editReward.text.toString()
+            val reward = if(rewardStr.isBlank()) { DEFAULT_REWARD } else {rewardStr.toInt()}
 
+            mViewModel.appendItem(newTitle,reward, DEFAULT_CATEGORY)
             findNavController().navigate(R.id.action_detailFragment_to_mainFragment)
         }
         super.onViewCreated(view, savedInstanceState)

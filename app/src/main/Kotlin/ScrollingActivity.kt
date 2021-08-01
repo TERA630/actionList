@@ -6,9 +6,9 @@ import android.view.MenuItem
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.findNavController
-import com.google.android.material.snackbar.Snackbar
 import io.terameteo.actionlist.databinding.ActivityScrollingBinding
 import io.terameteo.actionlist.model.MyModel
+import io.terameteo.actionlist.ui.MainFragmentDirections
 
 const val MAIN_WINDOW = "mainWindow"
 
@@ -33,8 +33,8 @@ class ScrollingActivity : AppCompatActivity() {
 
         // コマンド処理
         mBinding.fab.setOnClickListener { view ->
-            Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                .setAction("Action", null).show()
+            val destination = MainFragmentDirections.actionMainFragmentToDetailFragment(-1)
+            findNavController(R.id.mainFragmentContainer).navigate(destination)
         }
         //　データ更新時の処理
         mViewModel.currentRewardStr.observe(this){

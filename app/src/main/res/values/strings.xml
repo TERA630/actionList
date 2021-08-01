@@ -17,9 +17,7 @@
     <string name="append">追加</string>
     <string name="done">○</string>
     <string name="undone">×</string>
-    <string name="make_list_fromResource">サンプルのリストを作成する</string>
-    <string name="edit_category_list">カテゴリーを編集する</string>
-    <string name="move_date">日付の移動をします</string>
+
 
     <string name="titleCaption">行うことのタイトル</string>
     <string name="rewardCaption">達成時の報酬</string>
@@ -51,6 +49,8 @@
     <!-- contents  -->
     <string name="pushToHistory">History Fragmentへ移動</string>
     <string name="pushToMain">Main Fragmentへ移動</string>
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="make_list_fromResource">サンプルのリストを作成する</string>
+    <string name="edit_category_list">カテゴリーを編集する</string>
+    <string name="move_date">日付の移動をします</string>
+    <string name="add_item">アイテムを追加します</string>
 </resources>
