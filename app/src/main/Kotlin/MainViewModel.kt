@@ -30,7 +30,6 @@ class MainViewModel(private val myModel:MyModel) : ViewModel() {
 
         usedCategories.addSource(allItemList){
             val list = myModel.makeCategoryList(it)
-            Log.i(VIEW_MODEL,"categories are $list")
             usedCategories.postValue(list)
         }
     }

@@ -4,7 +4,6 @@ import android.view.LayoutInflater
 import android.view.MenuInflater
 import android.view.ViewGroup
 import androidx.core.content.res.ResourcesCompat
-import androidx.navigation.findNavController
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
@@ -48,7 +47,7 @@ class MainListAdaptor(
         holderOfCell.binding.cellText.setOnLongClickListener {
             view ->
             val destination = MainFragmentDirections.actionMainFragmentToDetailFragment(getItem(position).id)
-            view.findNavController().navigate(destination)
+            view.showContextMenu()
             true
         }
         holderOfCell.binding.root.setOnCreateContextMenuListener { menu, v, menuInfo ->
