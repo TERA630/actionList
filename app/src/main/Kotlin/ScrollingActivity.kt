@@ -1,8 +1,11 @@
 package io.terameteo.actionlist
 
 import android.os.Bundle
+import android.util.Log
+import android.view.ContextMenu
 import android.view.Menu
 import android.view.MenuItem
+import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.findNavController
@@ -10,7 +13,6 @@ import io.terameteo.actionlist.databinding.ActivityScrollingBinding
 import io.terameteo.actionlist.model.MyModel
 import io.terameteo.actionlist.ui.MainFragmentDirections
 
-const val MAIN_WINDOW = "mainWindow"
 
 class ScrollingActivity : AppCompatActivity() {
 
@@ -69,6 +71,25 @@ class ScrollingActivity : AppCompatActivity() {
             }
             else -> super.onOptionsItemSelected(item)
         }
+    }
+
+    override fun onCreateContextMenu(
+        menu: ContextMenu?,
+        v: View?,
+        menuInfo: ContextMenu.ContextMenuInfo?
+    ) {
+        Log.i("MainActivity","context was called")
+        super.onCreateContextMenu(menu, v, menuInfo)
+    }
+
+    override fun onContextItemSelected(item: MenuItem): Boolean {
+        when(item.itemId){
+            R.id.action_edit_item->
+            Log.i("MainActivity","context edit was selected")
+            R.id.action_delete_item->
+                Log.i("MainActivity","context delete was selected")
+        }
+        return super.onContextItemSelected(item)
     }
 }
 

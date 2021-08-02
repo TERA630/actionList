@@ -1,6 +1,7 @@
 package io.terameteo.actionlist.ui
 
 import android.view.LayoutInflater
+import android.view.MenuInflater
 import android.view.ViewGroup
 import androidx.core.content.res.ResourcesCompat
 import androidx.navigation.findNavController
@@ -49,6 +50,9 @@ class MainListAdaptor(
             val destination = MainFragmentDirections.actionMainFragmentToDetailFragment(getItem(position).id)
             view.findNavController().navigate(destination)
             true
+        }
+        holderOfCell.binding.root.setOnCreateContextMenuListener { menu, v, menuInfo ->
+            MenuInflater(v.context).inflate(R.menu.menu_context,menu)
         }
     }
     fun dateChange(_dateStr: String){

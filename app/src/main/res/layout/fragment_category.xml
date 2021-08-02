@@ -11,12 +11,14 @@
         android:id="@+id/categoryList"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+        android:layout_marginStart="16dp"
 
+        android:layout_marginTop="132dp"
+        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        tools:layout_height="400dp"
-        tools:itemCount="7" />
+        tools:itemCount="7"
+        tools:layout_height="400dp" />
 
     <Button
         android:id="@+id/backToMain"
