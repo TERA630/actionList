@@ -39,7 +39,7 @@ class DetailFragment : Fragment() {
 
         } else {
             mBinding.editTitle.setText(item.title)
-            mBinding.editReward.setText(item.reward)
+            mBinding.editReward.setText(item.reward.toString())
         }
 
         mBinding.detailCancelButton.setOnClickListener { v ->
