@@ -1,9 +1,11 @@
 package io.terameteo.actionlist.ui
 
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.MenuInflater
 import android.view.ViewGroup
 import androidx.core.content.res.ResourcesCompat
+import androidx.navigation.findNavController
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
@@ -46,13 +48,22 @@ class MainListAdaptor(
         }
         holderOfCell.binding.cellText.setOnLongClickListener {
             view ->
-            val destination = MainFragmentDirections.actionMainFragmentToDetailFragment(getItem(position).id)
+         //   val destination = MainFragmentDirections.actionMainFragmentToDetailFragment(getItem(position).id)
             view.showContextMenu()
             true
         }
         holderOfCell.binding.root.setOnCreateContextMenuListener { menu, v, menuInfo ->
             MenuInflater(v.context).inflate(R.menu.menu_context,menu)
+            menu.findItem(R.id.action_edit_item).setOnMenuItemClickListener {
+                v.findNavController().navigate(R.id.action_mainFragment_to_detailFragment)
+                true
+            }
+            menu.findItem(R.id.action_delete_item).setOnMenuItemClickListener {
+                Log.i("MainListAdaptor","item was  to be deleted.")
+                true
+            }
         }
+
     }
     fun dateChange(_dateStr: String){
         dateStr = _dateStr

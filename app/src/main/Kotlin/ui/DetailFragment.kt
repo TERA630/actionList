@@ -36,6 +36,7 @@ class DetailFragment : Fragment() {
         val item = list.find { itemEntity -> itemEntity.id == idSafe}
         if(item == null ) {
             Log.w("detailFragment","item ${args.idToEdit} was not found")
+
         } else {
             mBinding.editTitle.setText(item.title)
             mBinding.editReward.setText(item.reward)
