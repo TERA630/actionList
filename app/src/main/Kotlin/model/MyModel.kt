@@ -55,9 +55,6 @@ class MyModel {
             parseToItem(index, itemsFromResource[index])
         }
     }
-    fun insertItem(itemEntity: ItemEntity){
-        dao.insert(itemEntity)
-    }
 
     private fun parseToItem(id:Int, _string: String): ItemEntity {
         // 入力： string = "title ; reward ; category ; finishedHistory"

@@ -42,6 +42,7 @@ class MainListAdaptor(
         thisView.text = item.title
         thisView.background = ResourcesCompat.getDrawable(
             thisView.resources, backGround, thisView.context.theme)
+
         thisView.setOnClickListener {
             viewModel.flipItemHistory(item,dateStr)
             notifyItemChanged(position)
@@ -55,11 +56,14 @@ class MainListAdaptor(
         holderOfCell.binding.root.setOnCreateContextMenuListener { menu, v, menuInfo ->
             MenuInflater(v.context).inflate(R.menu.menu_context,menu)
             menu.findItem(R.id.action_edit_item).setOnMenuItemClickListener {
-                v.findNavController().navigate(R.id.action_mainFragment_to_detailFragment)
+                val destination = MainFragmentDirections.actionMainFragmentToDetailFragment(getItem(position).id)
+                Log.i("MainListAdapter","item ${getItem(position).id} at $position was edited.")
+                v.findNavController().navigate(destination)
                 true
             }
             menu.findItem(R.id.action_delete_item).setOnMenuItemClickListener {
                 Log.i("MainListAdaptor","item was  to be deleted.")
+                viewModel.deleteItem(getItem(position))
                 true
             }
         }

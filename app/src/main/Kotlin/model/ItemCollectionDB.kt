@@ -1,6 +1,7 @@
 package io.terameteo.actionlist.model
 
 
+import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.room.*
 
@@ -48,4 +49,16 @@ data class ItemEntity(
 
 fun ItemEntity.isDoneAt(dateStr: String): Boolean { // Str yyyy/mm/ddがFinished Historyに含まれればTRUE､なければFalse
     return dateStr.toRegex().containsMatchIn(this.history)
+}
+fun ItemEntity.appendDate(dateStr: String){
+    val dateList = this.history.split(",").toMutableList()
+    if(dateStr.matches("20[0-9]{2}/([1-9]|1[0-2])/([1-9]|[12][0-9]|3[01])".toRegex())){
+        dateList.add(dateStr)
+        dateList.sort()
+        val newDateList = dateList.joinToString(",")
+        this.history = newDateList
+    } else {
+        Log.w("ItemEntity","Appending $dateStr of $id was fail")
+    }
+    return
 }

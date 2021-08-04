@@ -48,7 +48,7 @@ class MainViewModel(private val myModel:MyModel) : ViewModel() {
             currentValue - item.reward
         } else {
             // アイテムが未チェック､チェックをつける
-            myModel.appendDateToItem(item,dateStr)
+            item.appendDate(dateStr)
             currentValue + item.reward
         }
         viewModelIOScope.launch { myModel.dao.update(item) }
@@ -70,8 +70,14 @@ class MainViewModel(private val myModel:MyModel) : ViewModel() {
         val newItem = ItemEntity(id = newId, title = newTitle,reward = newReward,category = newCategory)
 
         viewModelIOScope.launch {
-            myModel.insertItem(newItem)
+            myModel.dao.insert(newItem)
             Log.i(VIEW_MODEL,"item $newTitle was appended to List")
+        }
+    }
+    fun deleteItem(item: ItemEntity){
+        viewModelIOScope.launch {
+            myModel.dao.delete(item)
+            Log.i(VIEW_MODEL,"item ${item.title}  ${item.id} was deleted to List")
         }
     }
     fun saveListToRoom(_list:List<ItemEntity>){
@@ -83,7 +89,7 @@ class MainViewModel(private val myModel:MyModel) : ViewModel() {
         viewModelIOScope.launch {
             val list = myModel.makeItemListFromResource(_context)
             list.forEach { item ->
-                myModel.insertItem(item)
+                myModel.dao.insert(item)
             }
         }
     }
