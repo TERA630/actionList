@@ -56,14 +56,17 @@ class MainListAdaptor(
         holderOfCell.binding.root.setOnCreateContextMenuListener { menu, v, menuInfo ->
             MenuInflater(v.context).inflate(R.menu.menu_context,menu)
             menu.findItem(R.id.action_edit_item).setOnMenuItemClickListener {
-                val destination = MainFragmentDirections.actionMainFragmentToDetailFragment(getItem(position).id)
-                Log.i("MainListAdapter","item ${getItem(position).id} at $position was edited.")
+                val idToEdit = getItem(position).id
+                val destination = MainFragmentDirections.actionMainFragmentToDetailFragment(idToEdit)
+                Log.i("MainListAdapter","item $idToEdit at $position was edited.")
                 v.findNavController().navigate(destination)
+                notifyItemChanged(position)
                 true
             }
             menu.findItem(R.id.action_delete_item).setOnMenuItemClickListener {
                 Log.i("MainListAdaptor","item was  to be deleted.")
                 viewModel.deleteItem(getItem(position))
+                notifyItemRemoved(position)
                 true
             }
         }
