@@ -3,6 +3,9 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
+        <entry key="..\:/Users/YOSHI/AndroidStudioProjects/actionlist/app/src/main/res/drawable/square_round_gray.xml" value="0.2777777777777778" />
+        <entry key="..\:/Users/YOSHI/AndroidStudioProjects/actionlist/app/src/main/res/drawable/square_round_white.xml" value="0.2777777777777778" />
+        <entry key="..\:/Users/YOSHI/AndroidStudioProjects/actionlist/app/src/main/res/layout/fragment_history.xml" value="0.4005208333333333" />
         <entry key="..\:/Users/Yoshihiko/AndroidStudioProjects/actionList/app/src/main/res/drawable/frame_silver.xml" value="0.1" />
         <entry key="..\:/Users/Yoshihiko/AndroidStudioProjects/actionList/app/src/main/res/drawable/ic_daily.xml" value="0.1" />
         <entry key="..\:/Users/Yoshihiko/AndroidStudioProjects/actionList/app/src/main/res/drawable/ic_weekly.xml" value="0.1" />

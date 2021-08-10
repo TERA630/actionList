@@ -3,6 +3,7 @@ package io.terameteo.actionlist.ui
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.MenuInflater
+import android.view.View
 import android.view.ViewGroup
 import androidx.core.content.res.ResourcesCompat
 import androidx.navigation.findNavController
@@ -42,18 +43,35 @@ class MainListAdaptor(
         thisView.text = item.title
         thisView.background = ResourcesCompat.getDrawable(
             thisView.resources, backGround, thisView.context.theme)
+        val category = viewModel.currentCategory.value
 
-        thisView.setOnClickListener {
-            viewModel.flipItemHistory(item,dateStr)
+        if( category.isNullOrBlank()) {
+            bindCommands(holderOfCell.binding,position)
+        } else if(getItem(position).category == category){
+            holderOfCell.binding.root.visibility = View.VISIBLE
+            bindCommands(holderOfCell.binding,position)
+        } else {
+            holderOfCell.binding.root.visibility = View.GONE
+        }
+    }
+    fun dateChange(_dateStr: String){
+        dateStr = _dateStr
+        notifyDataSetChanged()
+    }
+
+
+    private fun bindCommands(binding:ItemTestBinding,position: Int){
+        binding.root.setOnClickListener {
+            viewModel.flipItemHistory(getItem(position),dateStr)
             notifyItemChanged(position)
         }
-        holderOfCell.binding.cellText.setOnLongClickListener {
-            view ->
-         //   val destination = MainFragmentDirections.actionMainFragmentToDetailFragment(getItem(position).id)
+        binding.cellText.setOnLongClickListener {
+                view ->
+            //   val destination = MainFragmentDirections.actionMainFragmentToDetailFragment(getItem(position).id)
             view.showContextMenu()
             true
         }
-        holderOfCell.binding.root.setOnCreateContextMenuListener { menu, v, menuInfo ->
+        binding.root.setOnCreateContextMenuListener { menu, v, menuInfo ->
             MenuInflater(v.context).inflate(R.menu.menu_context,menu)
             menu.findItem(R.id.action_edit_item).setOnMenuItemClickListener {
                 val idToEdit = getItem(position).id
@@ -72,12 +90,7 @@ class MainListAdaptor(
         }
 
     }
-    fun dateChange(_dateStr: String){
-        dateStr = _dateStr
-        notifyDataSetChanged()
-    }
 }
-
 object DiffCallback : DiffUtil.ItemCallback<ItemEntity>() {
     override fun areItemsTheSame(
         old: ItemEntity, new: ItemEntity ): Boolean {

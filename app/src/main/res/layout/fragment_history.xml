@@ -37,6 +37,21 @@
         app:srcCompat="@android:drawable/ic_media_play" />
 
 
+    <ImageView
+        android:id="@+id/toUpItem"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:srcCompat="@android:drawable/arrow_up_float"
+        app:layout_constraintTop_toTopOf="@id/toRecent"
+        app:layout_constraintStart_toEndOf="@id/toRecent"/>
+    <ImageView
+        android:id="@+id/tolateItem"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:srcCompat="@android:drawable/arrow_down_float"
+        app:layout_constraintTop_toTopOf="@id/toRecent"
+        app:layout_constraintEnd_toStartOf="@id/toPast"/>
+
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/historyGrid"
         android:layout_width="wrap_content"

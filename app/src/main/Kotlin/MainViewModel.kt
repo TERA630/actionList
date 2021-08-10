@@ -3,6 +3,7 @@ import android.content.Context
 import android.util.Log
 import androidx.lifecycle.*
 import io.terameteo.actionlist.model.*
+import io.terameteo.actionlist.ui.CategoryWithChecked
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -21,7 +22,7 @@ class MainViewModel(private val myModel:MyModel) : ViewModel() {
     val currentRewardStr = MediatorLiveData<String>()
     val currentPage = MutableLiveData(0)
     val currentCategory = MutableLiveData("")
-    val usedCategories= MediatorLiveData<List<String>>()
+    val usedCategories= MediatorLiveData<List<CategoryWithChecked>>()
 
     fun initialize(_context:Context) {
         currentReward.postValue(myModel.loadRewardFromPreference(_context))
@@ -30,7 +31,16 @@ class MainViewModel(private val myModel:MyModel) : ViewModel() {
 
         usedCategories.addSource(allItemList){
             val list = myModel.makeCategoryList(it)
-            usedCategories.postValue(list)
+            val oldList = usedCategories.value
+            val newList = if(oldList.isNullOrEmpty()) {
+                List(list.size){ i ->  CategoryWithChecked(list[i],false) }
+            } else {
+                List(list.size){i ->
+                    if(i in oldList.indices) CategoryWithChecked(list[i],oldList[i].checked)
+                    else CategoryWithChecked(list[i],false)
+                }
+            }
+            usedCategories.postValue(newList)
         }
     }
     fun stateSave(_context: Context) {
@@ -151,7 +161,10 @@ fun MediatorLiveData<List<String>>.safetyGet(position: Int):String{
         category[position]
     }
 }
-
+fun LiveData<List<CategoryWithChecked>>.listSize():Int{
+    val list = this.value
+    if(list.isNullOrEmpty()){return 0 }else{ return list.size}
+}
 
 
 //  ViewModel: Activity再生成や回転で破棄されない独自の長いLifecycleで管理されるClass(ViewModelLifeCycle)

@@ -14,7 +14,7 @@ import io.terameteo.actionlist.model.ItemEntity
 import io.terameteo.actionlist.model.isDoneAt
 import io.terameteo.actionlist.valueOrZero
 
-const val  NUMBER_OF_ITEMS  = 5
+const val  NUMBER_OF_ITEMS  = 10
 const val  NUMBER_OF_DAY = 7
 
 class HistoryAdaptor(private val mViewModel: MainViewModel)

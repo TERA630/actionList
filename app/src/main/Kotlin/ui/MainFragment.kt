@@ -39,9 +39,9 @@ class MainFragment : Fragment() {
         )
         mBinding.firstPageList.adapter = mAdaptor
         mCategoryAdaptor = CategoryListAdaptor(mViewModel)
+
         mBinding.categoryList.adapter = mCategoryAdaptor
         mBinding.categoryList.layoutManager = LinearLayoutManager(this.requireContext(),RecyclerView.HORIZONTAL,false)
-
 
         return mBinding.root
     }
@@ -72,8 +72,18 @@ class MainFragment : Fragment() {
         mViewModel.allItemList.observe(viewLifecycleOwner){
             mAdaptor.submitList(it)
         }
+        mViewModel.usedCategories
+
+
         mViewModel.usedCategories.observe(viewLifecycleOwner){
-            mCategoryAdaptor.notifyDataSetChanged()
+            mCategoryAdaptor.submitList(it)
+        }
+        mViewModel.currentCategory.observe(viewLifecycleOwner){
+            val list = mViewModel.usedCategories.value?.toMutableList() ?: emptyList<CategoryWithChecked>().toMutableList()
+            for(index in list.indices) {
+                list[index].checked = (list[index].title == it)
+            }
+            mCategoryAdaptor.submitList(list)
         }
         super.onViewCreated(view, savedInstanceState)
     }
