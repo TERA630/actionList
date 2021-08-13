@@ -35,7 +35,6 @@ class CategoryListAdaptor(private val mViewModel: MainViewModel)
             itemView.background = decideDrawable((mViewModel.currentCategory.value == ""),itemView)
             holder.mBinding.root.setOnClickListener {
                 mViewModel.currentCategory.postValue("")
-                notifyItemChanged(position)
             }
         } else {
             itemBind(position,(holder as ItemViewHolder).mBinding)

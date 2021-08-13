@@ -72,14 +72,11 @@ class MainFragment : Fragment() {
         mViewModel.allItemList.observe(viewLifecycleOwner){
             mAdaptor.submitList(it)
         }
-        mViewModel.usedCategories
-
-
         mViewModel.usedCategories.observe(viewLifecycleOwner){
             mCategoryAdaptor.submitList(it)
         }
         mViewModel.currentCategory.observe(viewLifecycleOwner){
-            val list = mViewModel.usedCategories.value?.toMutableList() ?: emptyList<CategoryWithChecked>().toMutableList()
+            val list = mViewModel.usedCategories.getCategories()
             for(index in list.indices) {
                 list[index].checked = (list[index].title == it)
             }

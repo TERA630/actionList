@@ -31,18 +31,20 @@ class MainViewModel(private val myModel:MyModel) : ViewModel() {
 
         usedCategories.addSource(allItemList){
             val list = myModel.makeCategoryList(it)
-            val oldList = usedCategories.value
-            val newList = if(oldList.isNullOrEmpty()) {
-                List(list.size){ i ->  CategoryWithChecked(list[i],false) }
-            } else {
-                List(list.size){i ->
-                    if(i in oldList.indices) CategoryWithChecked(list[i],oldList[i].checked)
-                    else CategoryWithChecked(list[i],false)
-                }
-            }
-            usedCategories.postValue(newList)
+            val newList = List(list.size){ i ->  CategoryWithChecked(list[i], (list[i] == currentCategory.value )) }
+            if(newList.isNotEmpty()) usedCategories.postValue(newList)
+        }
+        usedCategories.addSource(currentCategory){
+
+
         }
     }
+    fun updateCategoryList() {
+
+
+    }
+
+
     fun stateSave(_context: Context) {
         val reward = currentReward.value ?:0
         myModel.saveRewardToPreference(reward,_context)
@@ -134,20 +136,21 @@ fun MutableLiveData<List<ItemEntity>>.safetyGet(position:Int): ItemEntity {
     }
 }
 
-fun LiveData<List<ItemEntity>>.safetyGet(position:Int): ItemEntity {
-    val list = this.value
-    return if (list.isNullOrEmpty()) {
-        Log.w(VIEW_MODEL,"safetyGet $position was failed.")
-        ItemEntity(title = ERROR_TITLE,category = ERROR_CATEGORY)
-    } else {
-        list[position]
-    }
-}
 fun LiveData<List<ItemEntity>>.safetyGetList():List<ItemEntity> {
     val list = this.value
     return if (list.isNullOrEmpty()) {
         Log.w(VIEW_MODEL, "livaData list  was empty.")
         listOf(ItemEntity(title = ERROR_TITLE,category = DEFAULT_CATEGORY))
+    } else {
+        list
+    }
+}
+
+fun LiveData<List<CategoryWithChecked>>.getCategories():List<CategoryWithChecked> {
+    val list = this.value
+    return if (list.isNullOrEmpty()) {
+        Log.w(VIEW_MODEL, "livaData category list  was empty.")
+        listOf(CategoryWithChecked(title = ERROR_TITLE,false))
     } else {
         list
     }
