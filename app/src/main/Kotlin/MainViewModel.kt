@@ -30,18 +30,22 @@ class MainViewModel(private val myModel:MyModel) : ViewModel() {
         currentCategory.postValue(myModel.loadCategoryFromPreference(_context))
 
         usedCategories.addSource(allItemList){
+            if(it.isNullOrEmpty()) return@addSource
             val list = myModel.makeCategoryList(it)
-            val newList = List(list.size){ i ->  CategoryWithChecked(list[i], (list[i] == currentCategory.value )) }
+            val newList = updateCategoryList(list)
             if(newList.isNotEmpty()) usedCategories.postValue(newList)
         }
         usedCategories.addSource(currentCategory){
-
-
+            val list = usedCategories.value
+            if(list.isNullOrEmpty()) return@addSource
+            val newlist = List(list.size){
+                index -> CategoryWithChecked(list[index].title,(list[index].title == it))
+            }
+            usedCategories.postValue(newlist)
         }
     }
-    fun updateCategoryList() {
-
-
+    private fun updateCategoryList(list:List<String>):List<CategoryWithChecked> {
+        return List(list.size){ i ->  CategoryWithChecked(list[i], (list[i] == currentCategory.value )) }
     }
 
 
@@ -146,13 +150,13 @@ fun LiveData<List<ItemEntity>>.safetyGetList():List<ItemEntity> {
     }
 }
 
-fun LiveData<List<CategoryWithChecked>>.getCategories():List<CategoryWithChecked> {
+fun LiveData<List<CategoryWithChecked>>.getCategories():List<String> {
     val list = this.value
     return if (list.isNullOrEmpty()) {
         Log.w(VIEW_MODEL, "livaData category list  was empty.")
-        listOf(CategoryWithChecked(title = ERROR_TITLE,false))
+        listOf( ERROR_TITLE )
     } else {
-        list
+        return List(list.size) { i -> list[i].title }
     }
 }
 fun MediatorLiveData<List<String>>.safetyGet(position: Int):String{

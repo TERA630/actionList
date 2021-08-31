@@ -20,7 +20,7 @@ class CategoryListAdaptor(private val mViewModel: MainViewModel)
         :RecyclerView.ViewHolder(mBinding.root)
 
     override fun getItemCount(): Int {
-        val size = mViewModel.usedCategories.listSize() + 1
+        val size = mViewModel.usedCategories.listSize()
         return size
     }
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
@@ -29,22 +29,23 @@ class CategoryListAdaptor(private val mViewModel: MainViewModel)
         return ItemViewHolder(binding)
     }
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
-        if (position==0){
-            (holder as ItemViewHolder).mBinding.categoryText.text = "全て"
-            val itemView = holder.mBinding.root
-            itemView.background = decideDrawable((mViewModel.currentCategory.value == ""),itemView)
-            holder.mBinding.root.setOnClickListener {
-                mViewModel.currentCategory.postValue("")
-            }
-        } else {
+//        if (position==0){
+//            (holder as ItemViewHolder).mBinding.categoryText.text = "全て"
+//            val itemView = holder.mBinding.root
+//            itemView.background = decideDrawable((mViewModel.currentCategory.value == ""),itemView)
+//            holder.mBinding.root.setOnClickListener {
+//                mViewModel.currentCategory.postValue("")
+//            }
+//        } else {
             itemBind(position,(holder as ItemViewHolder).mBinding)
-        }
+ //       }
     }
     private fun itemBind(position: Int, binding:ItemCategoryBinding){
-        val item = getItem(position-1)
+        val item = getItem(position)
          binding.categoryText.text = item.title
          binding.root.background = decideDrawable(item.checked,binding.root)
          binding.root.setOnClickListener {
+             Log.i("categoryAdaptor","${item.title} was posted")
              mViewModel.currentCategory.postValue(item.title) }
     }
     private fun decideDrawable(condition:Boolean,itemView: View):Drawable{
@@ -67,7 +68,7 @@ object CategoryDiffCallBack : DiffUtil.ItemCallback<CategoryWithChecked>() {
     override fun areContentsTheSame(
         old: CategoryWithChecked, new: CategoryWithChecked
     ): Boolean {
-        return (old.checked == new.checked)
+        return (old.checked == new.checked) && (old.title == new.title)
     }
 }
 class CategoryWithChecked(

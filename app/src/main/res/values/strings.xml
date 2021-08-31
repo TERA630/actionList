@@ -46,7 +46,7 @@
         <item>病理所見クリア;30;仕事;2021/6/24,2021/6/26,2021/6/28</item>
         <item>サマリ-クリア;30;仕事;2021/6/28</item>
         <item>外来見直し;50;仕事;2021/6/30</item>
-        <item>歯間ブラシ;30;Daily;2021／6／29</item>
+        <item>歯間ブラシ;30;Daily;2021/6/29</item>
     </string-array>
     <!-- contents  -->
     <string name="pushToHistory">History Fragmentへ移動</string>

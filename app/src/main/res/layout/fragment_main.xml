@@ -43,23 +43,19 @@
         app:layout_constraintTop_toBottomOf="@+id/dateShowing"
         />
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/categoryList"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/toHistoryButton"
-        tools:itemCount="8"
-        tools:orientation="horizontal"
-        tools:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-        tools:layout_height="72dp"
-        tools:listitem="@layout/item_test" />
+<androidx.appcompat.widget.AppCompatSpinner
+    android:id="@+id/spinner_category"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    app:layout_constraintStart_toStartOf="parent"
+    app:layout_constraintTop_toBottomOf="@id/toHistoryButton"/>
+
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/firstPageList"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:layout_constraintTop_toBottomOf="@id/categoryList"
+        app:layout_constraintTop_toBottomOf="@id/spinner_category"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         tools:layout_height="360dp"

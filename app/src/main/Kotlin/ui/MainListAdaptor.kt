@@ -21,6 +21,7 @@ import io.terameteo.actionlist.model.isDoneAt
 class MainListAdaptor(
     private val viewModel: MainViewModel,
     private var dateStr:String ) : ListAdapter<ItemEntity, RecyclerView.ViewHolder>(DiffCallback) {
+
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolderOfCell {
         // リストの表示要求があったとき､viewTypeに応じて必要なViewHolderを確保する｡
         val layoutInflater = LayoutInflater.from(parent.context)
@@ -44,14 +45,19 @@ class MainListAdaptor(
         thisView.background = ResourcesCompat.getDrawable(
             thisView.resources, backGround, thisView.context.theme)
         val category = viewModel.currentCategory.value
-
-        if( category.isNullOrBlank()) {
-            bindCommands(holderOfCell.binding,position)
-        } else if(getItem(position).category == category){
-            holderOfCell.binding.root.visibility = View.VISIBLE
-            bindCommands(holderOfCell.binding,position)
-        } else {
-            holderOfCell.binding.root.visibility = View.GONE
+        Log.i("MainListAdapter","Category = $category")
+        when {
+            category.isNullOrBlank() -> {
+                bindCommands(holderOfCell.binding,position)
+                holderOfCell.binding.root.visibility = View.VISIBLE
+            }
+            getItem(position).category == category -> {
+                holderOfCell.binding.root.visibility = View.VISIBLE
+                bindCommands(holderOfCell.binding,position)
+            }
+            else -> {
+                holderOfCell.binding.root.visibility = View.GONE
+            }
         }
     }
     fun dateChange(_dateStr: String){
